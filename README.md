@@ -6,4 +6,4 @@
 |-----------:|-------------|
 | JavaScript | Java        |
 |   React.js | Springboot  |
-| HTML & CSS | PostgresSQL |
+| HTML & CSS | MariaDB |
