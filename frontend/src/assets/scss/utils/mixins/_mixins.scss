@@ -1,0 +1,43 @@
+@import "src/assets/scss/utils/_variables.scss";
+
+// spacing scale
+@mixin spacing-classes($property, $class-prefix) {
+  @each $name, $size in $spacing-scale {
+    .s-#{$class-prefix}-#{$name} {
+      #{$property}: $size;
+    }
+  }
+}
+
+// side spacing scale (top, right, bottom, left — Margin & Padding)
+@mixin side-spacing-classes($property, $class-prefix) {
+  @each $name, $size in $spacing-scale {
+    .s-#{$class-prefix}-t-#{$name} { #{$property}-top: $size; }
+    .s-#{$class-prefix}-r-#{$name} { #{$property}-right: $size; }
+    .s-#{$class-prefix}-b-#{$name} { #{$property}-bottom: $size; }
+    .s-#{$class-prefix}-l-#{$name} { #{$property}-left: $size; }
+  }
+}
+
+// typography scale
+@mixin typography-classes($property, $class-prefix, $font-scale, $line-height-scale, $apply-line-height: true) {
+  @each $name, $size in $font-scale {
+    $line-height: map-get($line-height-scale, $name);
+    .s-#{$class-prefix}-#{$name} {
+      #{$property}: $size;
+      @if $apply-line-height {
+        line-height: $line-height;
+      }
+    }
+  }
+}
+
+@mixin respond-max($breakpoint) {
+  @if map-has-key($breakpoints, $breakpoint) {
+    @media (max-width: map-get($breakpoints, $breakpoint)) {
+      @content;
+    }
+  } @else {
+    @warn "Unknown `#{$breakpoint}` in `respond-max` mixin.";
+  }
+}

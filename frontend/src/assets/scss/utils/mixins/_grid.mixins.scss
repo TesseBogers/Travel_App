@@ -1,0 +1,47 @@
+@import '../variables';
+
+@mixin create-custom-grid-container {
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+
+  @each $breakpoint, $gutter in $gutter-width {
+    @media (min-width: map-get($breakpoints, $breakpoint)) {
+      padding-right: $gutter;
+      padding-left: $gutter;
+    }
+  }
+}
+
+@mixin create-custom-grid-row {
+  display: grid;
+
+  @each $breakpoint, $count in $grid-columns {
+    @media (min-width: map-get($breakpoints, $breakpoint)) {
+      grid-template-columns: repeat($count, 1fr);
+      gap: map-get($gutter-width, $breakpoint);
+    }
+  }
+}
+
+@mixin create-custom-grid-column($size) {
+  grid-column: span $size;
+}
+
+@mixin responsive-custom-grid {
+  @each $breakpoint, $width in $breakpoints {
+    @media (min-width: $width) {
+      .custom-container-#{$breakpoint} {
+        @include create-custom-grid-container;
+      }
+      .custom-row-#{$breakpoint} {
+        @include create-custom-grid-row;
+      }
+      @for $i from 1 through map-get($grid-columns, $breakpoint) {
+        .custom-col-#{$breakpoint}-#{$i} {
+          @include create-custom-grid-column($i);
+        }
+      }
+    }
+  }
+}
