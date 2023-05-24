@@ -1,0 +1,94 @@
+//Order of imports is important in this file as it will be the order of the compiled CSS.
+
+// Utils
+@import 'utils/variables';
+@import 'utils/functions/functions';
+@import 'utils/mixins/mixins';
+@import 'utils/mixins/_grid-mixins.scss';
+@import 'utils/utilities';
+@import 'utils/helpers';
+@import 'base/fonts';
+
+// Base
+@import 'base/reset';
+@import 'base/modern-reset';
+@import 'base/typography';
+@import 'base/animations';
+
+// Layout
+@import 'layout/flexbox';
+@import 'layout/grid';
+@import 'layout/header';
+@import 'layout/navigation';
+@import 'layout/sidebar';
+@import 'layout/footer';
+@import 'layout/sections';
+
+// Components
+@import 'components/alerts';
+@import 'components/buttons';
+@import 'components/cards';
+@import 'components/cover';
+@import 'components/dropdown';
+@import 'components/forms';
+@import 'components/modals';
+
+// Pages
+@import 'pages/home';
+@import 'pages/travel-timeline';
+@import 'pages/trips';
+@import 'pages/live-info';
+@import 'pages/chat';
+@import 'pages/attractions';
+
+// Themes
+@import 'themes/darkmode';
+@import 'themes/lightmode';
+
+// Vendors
+@import 'vendors/modularscale';
+
+
+@include responsive-custom-grid; // Usage: custom-container-{breakpoint}, custom-row-{breakpoint}, custom-col-{breakpoint}-{number}
+@include spacing-classes(margin, 'm'); // Usage: s-m-{size}. Example: s-m-1, s-m-2, etc.
+@include spacing-classes(padding, 'p'); // Usage: s-p-{size}. Example: s-p-6, s-p-2, etc.
+@include spacing-classes(width, 'w'); // Usage: s-w-{size}. Example: s-w-10, s-w-24, etc.
+@include spacing-classes(height, 'h'); // Usage: s-h-{size}. Example: s-h-12, s-h-32, etc.
+@include spacing-classes(max-height, 'max-h'); // Usage: s-max-h-{size}. Example: s-max-h-20, s-max-h-64, etc.
+@include spacing-classes(gap, 'gap'); // Usage: s-gap-{size}. Example: s-gap-4, s-gap-8, etc.
+@include spacing-classes(inset, 'inset'); // Usage: s-inset-{size}. Example: s-inset-0, s-inset-2, etc.
+@include spacing-classes(space, 'space'); // Usage: s-space-{size}. Example: s-space-1, s-space-4, etc.
+@include spacing-classes(translate, 'translate'); // Usage: s-translate-{size}. Example: s-translate-1, s-translate-12, etc.
+
+@include side-spacing-classes(margin, 'm'); // Usage: s-m-{side}-{size}. Example: s-m-t-4 (top margin of 1rem), s-m-r-2 (right margin of 0.5rem), etc.
+@include side-spacing-classes(padding, 'p'); // Usage: s-p-{side}-{size}. Example: s-p-t-4 (top padding of 1rem), s-p-r-2 (right padding of 0.5rem), etc.
+
+@include typography-classes('font-size', 'font', $font-size-scale, $line-height-scale, true);  // line-height is applied
+@include typography-classes('font-size', 'font', $font-size-scale, $line-height-scale, false);  // line-height is not applied
+
+
+
+// all of these "BELOW" can be deleted, this is just to test the fonts and if sass is working in general!
+.heading {
+  color: $brand-blue-30-shades;
+    font-size: 10rem;
+}
+
+.font-sub-title,
+.font-titles,
+.font-body-text {
+  font-size: 2rem;
+  font-weight: $weight-bold;
+}
+
+.font-sub-title {
+  font-family: $font-inder;
+}
+
+.font-titles {
+  font-family: $font-roboto;
+}
+
+.font-body-text {
+  font-family: $font-signika-negative;
+}

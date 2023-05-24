@@ -1,0 +1,19 @@
+@import 'variables';
+@import './mixins/_mixins.scss';
+
+@each $breakpoint in map-keys($breakpoints) {
+  @include respond-max($breakpoint) {
+    .s-#{$breakpoint}-w-1-2 { width: 50%; }
+    .s-#{$breakpoint}-w-1-3 { width: calc(100% / 3); }
+    .s-#{$breakpoint}-w-2-3 { width: calc(100% / 1.5); }
+    .s-#{$breakpoint}-w-full { width: 100%; }
+
+    // Generate spacing classes
+    @include spacing-classes(padding, "#{$breakpoint}-p");
+    @include spacing-classes(margin, "#{$breakpoint}-m");
+
+    // Generate side spacing classes
+    @include side-spacing-classes(padding, "#{$breakpoint}-p");
+    @include side-spacing-classes(margin, "#{$breakpoint}-m");
+  }
+}
