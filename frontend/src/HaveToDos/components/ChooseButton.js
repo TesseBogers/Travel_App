@@ -1,31 +1,34 @@
-import React, { useState } from 'react'
-// import Pictures from './Pictures';
+import React, { useState } from 'react';
+import foodImage from '../../pictures/foodImage.jpg';
+import housingImage from '../../pictures/housingImage.jpg';
+import attractionsImage from '../../pictures/attractionsImage.jpg';
 
+export default function ChooseButton({ handleButtonClick }) {
+  const buttonBackgrounds = {
+    Food: foodImage,
+    Housing: housingImage,
+    Attractions: attractionsImage
+  };
 
-export default function ChooseButton() {
+  const optionButtons = ['Food', 'Housing', 'Attractions'];
 
-  const optionButtons = [
-    'Food',
-    'Housing',
-    'Attractions'
-  ]
-
-  const handleClick = (event) => console.log(event)
-
-  return(
-<>
-    <h1>What would you like to do?</h1>
-    <ul className="list-group">
-
-      {optionButtons.map((optionButtons, index) => (
-      <button 
-        key={optionButtons} 
-        style={{margin:'10px', height:'100px', width:'100px'}}
-        onClick={handleClick}
-      >{optionButtons}</button>
-      ))}
-
-    </ul>
-</>
-)
+  return (
+    <>
+      <h1>What would you like to do?</h1>
+      <ul className="list-group">
+        {optionButtons.map((optionButton, index) => (
+          <button
+            key={optionButton}
+            className="zoom-button"
+            style={{
+              backgroundImage: `url(${buttonBackgrounds[optionButton]})`,
+            }}
+            onClick={() => handleButtonClick(optionButton)}
+          >
+            {optionButton}
+          </button>
+        ))}
+      </ul>
+    </>
+  );
 }
