@@ -1,0 +1,19 @@
+.list-group{
+  display: flex;
+  justify-content: space-between;
+}
+.zoom-button{
+  color: white;
+  font-size: 25px;
+  margin: 10px;
+  height: 150px;
+  width: 150px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: transform 0.3s;
+}
+
+.zoom-button:hover {
+   transform: scale(1.1);
+ }
