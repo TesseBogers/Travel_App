@@ -1,4 +1,4 @@
-@import "src/assets/scss/utils/_variables.scss";
+@import "../variables.scss";
 
 // spacing scale
 @mixin spacing-classes($property, $class-prefix) {
