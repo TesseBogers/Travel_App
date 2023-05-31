@@ -4,13 +4,20 @@ export default function InsideCheckListAttraction() {
     const foodList = ['Place 1', 'Place 2', 'Place 3'];
 
     return (
+        <>
+            <h2 className="titleCheckList"> Recommendations: </h2>
         <ul className="checklist">
             {foodList.map((item, index) => (
-                <li key={index}>
-                    {item}
-                    <input type="checkbox" className="checkbox" />
+                <li key={index} className="list-item">
+                    <label className="label">
+                        {item}
+                        <input type="checkbox" className="checkbox" />
+                    </label>
                 </li>
             ))}
         </ul>
+            <button className="searchButton"> Search</button>
+
+        </>
     );
 }

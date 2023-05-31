@@ -1,6 +1,14 @@
+#root{
+  margin: 0px;
+}
 .list-group{
+  //display: flex;
+  //justify-content: center;
+  width: 100vw;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
+  margin-top: 50px;
+  margin-left: 0px;
 }
 .zoom-button{
   color: white;
@@ -12,8 +20,12 @@
   background-repeat: no-repeat;
   background-position: center;
   transition: transform 0.3s;
+  transition: 0.5s;
+  display: flex;
+  justify-content: center;
 }
 
 .zoom-button:hover {
    transform: scale(1.1);
+  font-size: 28px;
  }

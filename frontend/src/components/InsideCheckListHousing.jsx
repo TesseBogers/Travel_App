@@ -4,13 +4,19 @@ export default function InsideCheckListHousing() {
     const foodList = ['Hotel', 'AirBnb', 'booking.com'];
 
     return (
+        <>
+            <h2 className="titleCheckList">Feel at home:</h2>
         <ul className="checklist">
             {foodList.map((item, index) => (
-                <li key={index}>
-                    {item}
-                    <input type="checkbox" className="checkbox" />
+                <li key={index} className="list-item">
+                    <label className="label">
+                        {item}
+                        <input type="checkbox" className="checkbox" />
+                    </label>
                 </li>
             ))}
         </ul>
+            <button className="searchButton"> Search</button>
+        </>
     );
 }

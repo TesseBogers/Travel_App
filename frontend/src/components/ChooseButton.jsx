@@ -14,7 +14,6 @@ export default function ChooseButton({ handleButtonClick }) {
 
     return (
         <>
-            <h1>What would you like to do?</h1>
             <ul className="list-group">
                 {optionButtons.map((optionButton) => (
                     <button
