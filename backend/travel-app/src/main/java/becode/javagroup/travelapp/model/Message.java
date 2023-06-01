@@ -1,14 +1,12 @@
 package becode.javagroup.travelapp.model;
 import lombok.*;
 
-import java.util.Date;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @ToString
-public class ChatMessage {
+public class Message {
 
         private String senderName;
         private String receiverName;
