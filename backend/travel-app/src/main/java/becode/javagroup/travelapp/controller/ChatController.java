@@ -1,5 +1,6 @@
 package becode.javagroup.travelapp.controller;
 import becode.javagroup.travelapp.model.Message;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
