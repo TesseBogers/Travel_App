@@ -120,25 +120,27 @@ const ChatRoom = () => {
     connect();
   };
   return (
-    <div className="font-signifka-negative container ">
+    <div className="font-signifka-negative container relative ">
       {userData.connected ? (
         <div className="chat-box ">
-          <div className="member-list mx-6 ">
+          <div className="member-list  w-1/5">
             <ul>
               <li
                 onClick={() => {
                   setTab("CHATROOM");
                 }}
-                className={`member ${tab === "CHATROOM" && "active"} `}
+                className={`   bg-palette-light-color-2   ${
+                  tab === "CHATROOM" && "active"
+                } `}
               >
-                Chatroom
+                <p>Chatroom</p>
               </li>
               {[...privateChats.keys()].map((name, index) => (
                 <li
                   onClick={() => {
                     setTab(name);
                   }}
-                  className={`member ${tab === name && "active"}`}
+                  className={`member  ${tab === name && "active"} `}
                   key={index}
                 >
                   {name}
@@ -147,8 +149,8 @@ const ChatRoom = () => {
             </ul>
           </div>
           {tab === "CHATROOM" && (
-            <div className="chat-content ">
-              <ul className="chat-messages ">
+            <div className="chat-content w-4/5">
+              <ul className="chat-messages mb-5 h-4/5 ">
                 {publicChats.map((chat, index) => (
                   <li
                     className={`message ${
@@ -157,27 +159,31 @@ const ChatRoom = () => {
                     key={index}
                   >
                     {chat.senderName !== userData.username && (
-                      <div className="avatar">{chat.senderName}</div>
+                      <div className="avatar bg-palette-light-color-2">
+                        {chat.senderName}
+                      </div>
                     )}
                     <div className="message-data">{chat.message}</div>
                     {chat.senderName === userData.username && (
-                      <div className="avatar self">{chat.senderName}</div>
+                      <div className="avatar  bg-palette-light-color-3">
+                        {chat.senderName}
+                      </div>
                     )}
                   </li>
                 ))}
               </ul>
 
-              <div className="send-message">
+              <div className="send-message w-full">
                 <input
                   type="text"
-                  className="input-message "
+                  className="input-message w-11/12 border border-palette-light-color-2 "
                   placeholder="enter the message"
                   value={userData.message}
                   onChange={handleMessage}
                 />
                 <button
                   type="button"
-                  className="send-button "
+                  className="send-button mx-5  bg-palette-light-color-2"
                   onClick={sendValue}
                 >
                   send
@@ -187,20 +193,24 @@ const ChatRoom = () => {
           )}
           {tab !== "CHATROOM" && (
             <div className="chat-content">
-              <ul className="chat-messages">
+              <ul className="chat-messages mb-5  h-4/5">
                 {[...privateChats.get(tab)].map((chat, index) => (
                   <li
-                    className={`message ${
+                    className={`message flex w-auto flex-row p-5 ${
                       chat.senderName === userData.username && "self"
                     }`}
                     key={index}
                   >
                     {chat.senderName !== userData.username && (
-                      <div className="avatar">{chat.senderName}</div>
+                      <div className="avatar bg-palette-light-color-2">
+                        {chat.senderName}
+                      </div>
                     )}
                     <div className="message-data">{chat.message}</div>
                     {chat.senderName === userData.username && (
-                      <div className="avatar self">{chat.senderName}</div>
+                      <div className="avatar  bg-palette-light-color-3">
+                        {chat.senderName}
+                      </div>
                     )}
                   </li>
                 ))}
@@ -209,14 +219,14 @@ const ChatRoom = () => {
               <div className="send-message ">
                 <input
                   type="text"
-                  className="input-message"
+                  className="input-message  border-palette-light-color-2"
                   placeholder="enter the message"
                   value={userData.message}
                   onChange={handleMessage}
                 />
                 <button
                   type="button"
-                  className="send-button"
+                  className="send-button mx-5 bg-palette-light-color-2 "
                   onClick={sendPrivateValue}
                 >
                   send
@@ -226,16 +236,20 @@ const ChatRoom = () => {
           )}
         </div>
       ) : (
-        <div className="register">
+        <div className="register ">
           <input
-            className=""
+            className="border border-palette-light-color-2  focus:border-4 focus:border-palette-light-color-2"
             id="user-name"
             placeholder="Enter your name"
             name="userName"
             value={userData.username}
             onChange={handleUsername}
           />
-          <button className="" type="button" onClick={registerUser}>
+          <button
+            className="mx-5 bg-palette-light-color-2"
+            type="button"
+            onClick={registerUser}
+          >
             connect
           </button>
         </div>
