@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { over } from "stompjs";
 import SockJS from "sockjs-client";
+import "../../dist/output.css";
 
 var stompClient = null;
 const ChatRoom = () => {
@@ -119,18 +120,18 @@ const ChatRoom = () => {
     connect();
   };
   return (
-    <div className="container">
+    <div className="font-signifka-negative container ">
       {userData.connected ? (
-        <div className="chat-box">
-          <div className="member-list">
+        <div className="chat-box ">
+          <div className="member-list mx-6 ">
             <ul>
               <li
                 onClick={() => {
                   setTab("CHATROOM");
                 }}
-                className={`member ${tab === "CHATROOM" && "active"}`}
+                className={`member ${tab === "CHATROOM" && "active"} `}
               >
-                Chatroom
+                <h1>Chatroom</h1>
               </li>
               {[...privateChats.keys()].map((name, index) => (
                 <li
@@ -146,8 +147,8 @@ const ChatRoom = () => {
             </ul>
           </div>
           {tab === "CHATROOM" && (
-            <div className="chat-content">
-              <ul className="chat-messages">
+            <div className="chat-content ">
+              <ul className="chat-messages ">
                 {publicChats.map((chat, index) => (
                   <li
                     className={`message ${
@@ -169,14 +170,14 @@ const ChatRoom = () => {
               <div className="send-message">
                 <input
                   type="text"
-                  className="input-message"
+                  className="input-message "
                   placeholder="enter the message"
                   value={userData.message}
                   onChange={handleMessage}
                 />
                 <button
                   type="button"
-                  className="send-button"
+                  className="send-button "
                   onClick={sendValue}
                 >
                   send
@@ -205,7 +206,7 @@ const ChatRoom = () => {
                 ))}
               </ul>
 
-              <div className="send-message">
+              <div className="send-message ">
                 <input
                   type="text"
                   className="input-message"
@@ -227,13 +228,14 @@ const ChatRoom = () => {
       ) : (
         <div className="register">
           <input
+            className=""
             id="user-name"
             placeholder="Enter your name"
             name="userName"
             value={userData.username}
             onChange={handleUsername}
           />
-          <button type="button" onClick={registerUser}>
+          <button className="" type="button" onClick={registerUser}>
             connect
           </button>
         </div>
