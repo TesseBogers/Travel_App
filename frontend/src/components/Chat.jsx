@@ -131,7 +131,7 @@ const ChatRoom = () => {
                 }}
                 className={`member ${tab === "CHATROOM" && "active"} `}
               >
-                <h1>Chatroom</h1>
+                Chatroom
               </li>
               {[...privateChats.keys()].map((name, index) => (
                 <li
