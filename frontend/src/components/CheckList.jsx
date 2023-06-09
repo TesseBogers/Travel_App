@@ -3,7 +3,7 @@ import ChooseButton from './ChooseButton';
 import InsideCheckListFood from './InsideCheckListFood';
 import InsideCheckListAttractions from './InsideCheckListAttraction';
 import InsideCheckListHousing from './InsideCheckListHousing.jsx';
-import SearchButton from "./SearchButton.jsx";
+
 export default function App() {
     const [selectedOption, setSelectedOption] = useState(null);
 
@@ -13,6 +13,7 @@ export default function App() {
 
     return (
         <div className="App">
+            <h1 className="titlebutton">What would you like to do?</h1>
             <ChooseButton handleButtonClick={handleButtonClick} />
             <div className="containerCheckList">
                 {selectedOption === 'Food' && <InsideCheckListFood />}

@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default function InsideCheckListAttraction() {
-    const foodList = ['Place 1', 'Place 2', 'Place 3'];
+    const foodList = ['Aquaria', 'Archaeological sites', 'Artwork','Botanical garden', 'Gallery', 'Historical sites','Library', 'Memorials', 'Museums', 'Theme park', 'viewpoints', 'Zoo'];
 
     return (
         <>

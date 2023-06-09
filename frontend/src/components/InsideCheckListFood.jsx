@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default function InsideCheckListFood() {
-    const foodList = ['Pizza', 'Sushi', 'Kebab'];
+    const foodList = ['Bakery', 'Cafe', 'Fast-food', 'Restaurant', 'Supermarkets'];
 
     return (
         <>

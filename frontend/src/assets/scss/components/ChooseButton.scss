@@ -6,12 +6,12 @@
   //justify-content: center;
   width: 100vw;
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   margin-top: 50px;
   margin-left: 0px;
 }
 .zoom-button{
-  color: white;
+  color: $success-90-light;
   font-size: 25px;
   margin: 10px;
   height: 150px;
@@ -28,4 +28,6 @@
 .zoom-button:hover {
    transform: scale(1.1);
   font-size: 28px;
+  border: 5px solid $brand-blue-30-shades;
+  color: $palette-light-color-5;
  }

@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default function InsideCheckListHousing() {
-    const foodList = ['Hotel', 'AirBnb', 'booking.com'];
+    const foodList = ['Hotel', 'Hostels', 'Campsites'];
 
     return (
         <>

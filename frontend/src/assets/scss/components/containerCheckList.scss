@@ -1,9 +1,9 @@
 .containerCheckList{
-  height: 500px;
+  height: auto;
   width: 300px;
-  marginLeft: 100px;
   margin-top: 20px;
-  background-color: #7AA8E1;
-  color: white;
+  background-color: $brand-blue-30-shades;
+  color: $brand-blue-60-light;
   border-radius: 15px;
+  padding: 10px;
 }
