@@ -2,9 +2,11 @@ package becode.javagroup.travelapp.controller;
 
 import becode.javagroup.travelapp.dto.UserDTO;
 import becode.javagroup.travelapp.exception.DuplicateUserException;
+import becode.javagroup.travelapp.exception.RoleNotFoundException;
 import becode.javagroup.travelapp.exception.UserNotFoundException;
 import becode.javagroup.travelapp.model.RoleName;
 import becode.javagroup.travelapp.model.User;
+import becode.javagroup.travelapp.service.RoleService;
 import becode.javagroup.travelapp.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +25,7 @@ import java.util.Set;
 public class UserController {
 
     private final UserService userService;
+    private final RoleService roleService;
 
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
@@ -42,7 +45,7 @@ public class UserController {
     @PostMapping
     public ResponseEntity<User> createUser(@Valid @RequestBody @NotNull UserDTO userDTO) {
         try {
-            Optional<User> createdUserOpt = userService.createUser(userDTO.getUsername(), userDTO.getPasswordHash(), userDTO.getEmail(), userDTO.getRoles());
+            Optional<User> createdUserOpt = Optional.ofNullable(userService.createUser(userDTO.getUsername(), userDTO.getPasswordHash(), userDTO.getEmail(), userDTO.getRoles()));
             // If user could not be created due to conflict
             return createdUserOpt.map(ResponseEntity::ok).orElseGet(() -> new ResponseEntity<>(HttpStatus.CONFLICT));
         } catch (DuplicateUserException exception) {
@@ -53,7 +56,7 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable(value = "id") Long userId, @Valid @RequestBody @NotNull UserDTO userDetails) {
         try {
-            Optional<User> updatedUserOpt = userService.updateUser(userId, userDetails.getUsername(), userDetails.getPasswordHash(), userDetails.getEmail(), userDetails.getRoles());
+            Optional<User> updatedUserOpt = Optional.ofNullable(userService.updateUser(userId, userDetails.getUsername(), userDetails.getPasswordHash(), userDetails.getEmail(), userDetails.getRoles()));
             return updatedUserOpt.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
         } catch (UserNotFoundException ex) {
             return ResponseEntity.notFound().build();
@@ -74,11 +77,11 @@ public class UserController {
     public ResponseEntity<User> assignRolesToUser(@PathVariable(value = "id") Long userId, @RequestBody @NotNull Set<RoleName> roleNames) {
         try {
             for (RoleName roleName : roleNames) {
-                userService.assignRoleToUser(userId, roleName);
+                roleService.assignRoleToUser(userId, roleName);
             }
             User userWithNewRoles = userService.findUserById(userId);
             return ResponseEntity.ok(userWithNewRoles);
-        } catch (UserNotFoundException ex) {
+        } catch (UserNotFoundException | RoleNotFoundException exception) {
             return ResponseEntity.notFound().build();
         }
     }
@@ -87,12 +90,25 @@ public class UserController {
     public ResponseEntity<User> removeRolesFromUser(@PathVariable(value = "id") Long userId, @RequestBody @NotNull Set<RoleName> roleNames) {
         try {
             for (RoleName roleName : roleNames) {
-                userService.removeRoleFromUser(userId, roleName);
+                roleService.removeRoleFromUser(userId, roleName);
             }
             User userWithoutRoles = userService.findUserById(userId);
             return ResponseEntity.ok(userWithoutRoles);
-        } catch (UserNotFoundException ex) {
+        } catch (UserNotFoundException | RoleNotFoundException ex) {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @GetMapping("/username/{username}")
+    public ResponseEntity<User> getUserByUsername(@PathVariable(value = "username") String username) {
+        User user = userService.findByUsername(username);
+        return ResponseEntity.ok().body(user);
+    }
+
+    @GetMapping("/email/{email}")
+    public ResponseEntity<User> getUserByEmail(@PathVariable(value = "email") String email) {
+        User user = userService.findByEmail(email);
+        return ResponseEntity.ok().body(user);
+    }
+
 }

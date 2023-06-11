@@ -20,6 +20,10 @@ public class Role {
     @Column(name = "name", unique = true)
     private String name;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role_name")
+    private RoleName roleName;
+
     @ManyToMany(mappedBy = "roles")
     private Set<User> users;
 
