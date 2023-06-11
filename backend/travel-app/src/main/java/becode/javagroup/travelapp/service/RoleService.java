@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * RoleService is a service class responsible for managing roles in the system.
@@ -73,5 +75,16 @@ public class RoleService {
         roleRepository.delete(role);
 
         return Optional.empty();
+    }
+
+    /**
+     * Converts a set of RoleName objects to a set of Role objects.
+     *
+     * @param roles the set of RoleName objects to be converted.
+     * @return the converted set of Role objects.
+     */
+    public Set<Role> convertToRoleSet(@NotNull Set<RoleName> roles) {
+        Set<String> roleNames = roles.stream().map(RoleName::name).collect(Collectors.toSet());
+        return roleRepository.findByNameIn(roleNames);
     }
 }
