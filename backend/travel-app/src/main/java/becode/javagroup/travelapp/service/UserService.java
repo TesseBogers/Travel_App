@@ -1,6 +1,7 @@
 package becode.javagroup.travelapp.service;
 
 import becode.javagroup.travelapp.exception.DuplicateUserException;
+import becode.javagroup.travelapp.exception.RoleNotFoundException;
 import becode.javagroup.travelapp.exception.UserNotFoundException;
 import becode.javagroup.travelapp.model.Role;
 import becode.javagroup.travelapp.model.RoleName;
@@ -14,7 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Service class for handling user related operations.
@@ -33,12 +36,13 @@ public class UserService {
      *
      * @param username The username of the user.
      * @param password The password of the user.
-     * @param email The email of the user.
+     * @param email    The email of the user.
+     * @param roles    The roles of the user.
      * @return An Optional<User> that contains the created user.
      * @throws DuplicateUserException if a user with the provided username or email already exists.
      */
     @Transactional
-    public Optional<User> createUser(String username, String password, String email) {
+    public Optional<User> createUser(String username, String password, String email, Set<RoleName> roles) {
         if (isUsernameOrEmailTaken(username, email)) {
             throw new DuplicateUserException("Error: Username or email already in use.");
         }
@@ -67,20 +71,25 @@ public class UserService {
     /**
      * Updates the details of an existing user.
      *
-     * @param updatedUser The user with the updated details.
+     * @param id The id of the user to be updated.
+     * @param username The new username of the user.
+     * @param plainPassword The new password of the user.
+     * @param email The new email of the user.
+     * @param roles The new roles of the user.
      * @return An Optional<User> that contains the updated user.
-     * @throws UserNotFoundException if a user with the provided id does not exist.
      */
     @Transactional
-    public Optional<User> updateUser(@NotNull User updatedUser) {
-        User user = findUserById(updatedUser.getId());
+    public Optional<User> updateUser(Long id, String username, String plainPassword, String email, Set<RoleName> roles) {
+        User user = findUserById(id);
 
-        user.setUsername(updatedUser.getUsername());
-        user.setEmail(updatedUser.getEmail());
+        user.setUsername(username);
+        user.setEmail(email);
 
-        if (isPasswordChanged(updatedUser, user)) {
-            user.setPasswordHash(hashPassword(updatedUser.getPasswordHash()));
-        }
+        String newHashedPassword = hashPassword(plainPassword);
+        user.setPasswordHash(newHashedPassword);
+
+        Set<Role> roleSet = roleService.convertToRoleSet(roles);
+        user.setRoles(roleSet);
 
         userRepository.save(user);
         logger.info("User updated with ID: {}", user.getId());
@@ -147,20 +156,41 @@ public class UserService {
 
             return Optional.of(user);
         } else {
-            throw new IllegalArgumentException("Error: User does not have this role.");
+            throw new RoleNotFoundException("Error: User does not have this role.");
         }
     }
 
 
     // Private helper methods
+    /**
+     * Checks if a user with the provided username or email already exists.
+     *
+     * @param username The username to check.
+     * @param email The email to check.
+     * @return true if a user with the provided username or email already exists, false otherwise.
+     */
     private boolean isUsernameOrEmailTaken(String username, String email) {
         return userRepository.findByUsername(username).isPresent() || userRepository.findByEmail(email).isPresent();
     }
 
+    /**
+     * Hashes a password using BCrypt.
+     *
+     * @param password The password to be hashed.
+     * @return The hashed password.
+     */
     private @NotNull String hashPassword(String password) {
         return BCrypt.hashpw(password, BCrypt.gensalt());
     }
 
+    /**
+     * Builds a new user.
+     *
+     * @param username The username of the user.
+     * @param email The email of the user.
+     * @param hashedPassword The hashed password of the user.
+     * @return The new user.
+     */
     private User buildNewUser(String username, String email, String hashedPassword) {
         return User.builder()
                 .username(username)
@@ -169,12 +199,34 @@ public class UserService {
                 .build();
     }
 
-    private User findUserById(Long id) {
+    /**
+     * Finds a user by id.
+     *
+     * @param id The id of the user to be found.
+     * @return The user.
+     * @throws UserNotFoundException if a user with the provided id does not exist.
+     */
+    public User findUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("Error: User not found."));
     }
 
+    /**
+     * Checks if a user's password has been changed.
+     *
+     * @param updatedUser The updated user.
+     * @param user The user to be compared to.
+     * @return true if the password has been changed, false otherwise.
+     */
     private boolean isPasswordChanged(@NotNull User updatedUser, @NotNull User user) {
         return !updatedUser.getPasswordHash().equals(user.getPasswordHash());
+    }
+
+    /**
+     * Finds all users.
+     * @return A list of all users.
+     */
+    public List<User> findAllUsers() {
+        return userRepository.findAll();
     }
 }
