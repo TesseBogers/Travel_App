@@ -1,232 +1,250 @@
 package becode.javagroup.travelapp.service;
 
 import becode.javagroup.travelapp.exception.DuplicateUserException;
-import becode.javagroup.travelapp.exception.RoleNotFoundException;
 import becode.javagroup.travelapp.exception.UserNotFoundException;
 import becode.javagroup.travelapp.model.Role;
 import becode.javagroup.travelapp.model.RoleName;
 import becode.javagroup.travelapp.model.User;
+import becode.javagroup.travelapp.repository.RoleRepository;
 import becode.javagroup.travelapp.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
- * Service class for handling user related operations.
+ * UserService is a service class responsible for managing users in the system.
+ * It interacts with the UserRepository to store and retrieve user data.
  */
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class UserService {
 
+    /**
+     * The UserRepository is used to store and retrieve user data.
+     * The logger is used to log information, warnings, and errors.
+     */
     private final UserRepository userRepository;
-    private final RoleService roleService;
-
+    private final RoleRepository roleRepository;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     /**
-     * Creates a new user.
+     * Creates a user with the provided details.
      *
-     * @param username The username of the user.
-     * @param password The password of the user.
-     * @param email    The email of the user.
-     * @param roles    The roles of the user.
-     * @return An Optional<User> that contains the created user.
-     * @throws DuplicateUserException if a user with the provided username or email already exists.
+     * @param username the username of the user.
+     * @param password the password of the user.
+     * @param email    the email of the user.
+     * @param roles    the roles of the user.
+     * @return The created user.
+     * @throws DuplicateUserException if a user with the given username or email already exists.
      */
-    @Transactional
-    public Optional<User> createUser(String username, String password, String email, Set<RoleName> roles) {
-        if (isUsernameOrEmailTaken(username, email)) {
-            throw new DuplicateUserException("Error: Username or email already in use.");
-        }
+    public User createUser(String username, String password, String email, Set<RoleName> roles) {
+        validateUsernameAndEmail(null, username, email);
 
         String hashedPassword = hashPassword(password);
-
         User user = buildNewUser(username, email, hashedPassword);
-
+        Set<Role> roleSet = convertToRoleSet(roles);
+        user.setRoles(roleSet);
         userRepository.save(user);
         logger.info("User created with ID: {}", user.getId());
 
-        return Optional.of(user);
+        return user;
     }
 
     /**
-     * Checks if the given password is correct for the provided user.
+     * Checks if the given password matches the user's password.
      *
-     * @param user The user to check the password for.
+     * @param user     The user.
      * @param password The password to check.
-     * @return true if the password is correct, false otherwise.
+     * @return True if the passwords match, false otherwise.
      */
     public boolean checkPassword(@NotNull User user, String password) {
         return BCrypt.checkpw(password, user.getPasswordHash());
     }
 
     /**
-     * Updates the details of an existing user.
+     * Updates the user with the given details.
      *
-     * @param id The id of the user to be updated.
-     * @param username The new username of the user.
-     * @param plainPassword The new password of the user.
-     * @param email The new email of the user.
-     * @param roles The new roles of the user.
-     * @return An Optional<User> that contains the updated user.
+     * @param id       the id of the user.
+     * @param username the new username of the user.
+     * @param password the new password of the user.
+     * @param email    the new email of the user.
+     * @param roles    the new roles of the user.
+     * @return The updated user.
      */
-    @Transactional
-    public Optional<User> updateUser(Long id, String username, String plainPassword, String email, Set<RoleName> roles) {
-        User user = findUserById(id);
+    public User updateUser(Long id, String username, String password, String email, Set<RoleName> roles) {
+        validateUsernameAndEmail(id, username, email);
 
+        User user = findUserById(id);
         user.setUsername(username);
         user.setEmail(email);
-
-        String newHashedPassword = hashPassword(plainPassword);
+        String newHashedPassword = hashPassword(password);
         user.setPasswordHash(newHashedPassword);
-
-        Set<Role> roleSet = roleService.convertToRoleSet(roles);
+        Set<Role> roleSet = convertToRoleSet(roles);
         user.setRoles(roleSet);
-
         userRepository.save(user);
         logger.info("User updated with ID: {}", user.getId());
 
-        return Optional.of(user);
+        return user;
     }
 
     /**
-     * Deletes a user.
+     * Deletes the user with the given id.
      *
-     * @param id The id of the user to be deleted.
-     * @return An Optional<Void>.
-     * @throws UserNotFoundException if a user with the provided id does not exist.
+     * @param id the id of the user to delete.
      */
-    @Transactional
-    public Optional<Void> deleteUser(Long id) {
+    public void deleteUser(Long id) {
         User user = findUserById(id);
-
         userRepository.delete(user);
         logger.info("User deleted with ID: {}", user.getId());
-
-        return Optional.empty();
     }
 
     /**
-     * Assigns a role to a user.
+     * Finds a user by its ID.
      *
-     * @param userId The id of the user.
-     * @param roleName The name of the role to be assigned.
-     * @return An Optional<User> that contains the user with the newly assigned role.
-     * @throws UserNotFoundException if a user with the provided id does not exist.
-     */
-    @Transactional
-    public Optional<User> assignRoleToUser(Long userId, RoleName roleName) {
-        User user = findUserById(userId);
-        Role role = roleService.findByName(roleName);
-
-        user.getRoles().add(role);
-
-        userRepository.save(user);
-        logger.info("Role {} assigned to user with ID: {}", roleName, user.getId());
-
-        return Optional.of(user);
-    }
-
-    /**
-     * Removes a role from a user.
-     *
-     * @param userId The id of the user.
-     * @param roleName The name of the role to be removed.
-     * @return An Optional<User> that contains the user with the role removed.
-     * @throws UserNotFoundException if a user with the provided id does not exist.
-     * @throws IllegalArgumentException if the user does not have the role to be removed.
-     */
-    @Transactional
-    public Optional<User> removeRoleFromUser(Long userId, RoleName roleName) {
-        User user = findUserById(userId);
-        Role role = roleService.findByName(roleName);
-
-        if (user.getRoles().contains(role)) {
-            user.getRoles().remove(role);
-            userRepository.save(user);
-            logger.info("Role {} removed from user with ID: {}", roleName, user.getId());
-
-            return Optional.of(user);
-        } else {
-            throw new RoleNotFoundException("Error: User does not have this role.");
-        }
-    }
-
-
-    // Private helper methods
-    /**
-     * Checks if a user with the provided username or email already exists.
-     *
-     * @param username The username to check.
-     * @param email The email to check.
-     * @return true if a user with the provided username or email already exists, false otherwise.
-     */
-    private boolean isUsernameOrEmailTaken(String username, String email) {
-        return userRepository.findByUsername(username).isPresent() || userRepository.findByEmail(email).isPresent();
-    }
-
-    /**
-     * Hashes a password using BCrypt.
-     *
-     * @param password The password to be hashed.
-     * @return The hashed password.
-     */
-    private @NotNull String hashPassword(String password) {
-        return BCrypt.hashpw(password, BCrypt.gensalt());
-    }
-
-    /**
-     * Builds a new user.
-     *
-     * @param username The username of the user.
-     * @param email The email of the user.
-     * @param hashedPassword The hashed password of the user.
-     * @return The new user.
-     */
-    private User buildNewUser(String username, String email, String hashedPassword) {
-        return User.builder()
-                .username(username)
-                .email(email)
-                .passwordHash(hashedPassword)
-                .build();
-    }
-
-    /**
-     * Finds a user by id.
-     *
-     * @param id The id of the user to be found.
-     * @return The user.
-     * @throws UserNotFoundException if a user with the provided id does not exist.
+     * @param id The ID of the user.
+     * @return The user, or throws UserNotFoundException if the user doesn't exist.
      */
     public User findUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("Error: User not found."));
+                .orElseThrow(() -> new UserNotFoundException("No user found with id = " + id));
     }
 
     /**
-     * Checks if a user's password has been changed.
+     * Finds a user by its username.
      *
-     * @param updatedUser The updated user.
-     * @param user The user to be compared to.
-     * @return true if the password has been changed, false otherwise.
+     * @param username The username of the user.
+     * @return An Optional containing the user if found, or an empty Optional otherwise.
      */
-    private boolean isPasswordChanged(@NotNull User updatedUser, @NotNull User user) {
-        return !updatedUser.getPasswordHash().equals(user.getPasswordHash());
+    public Optional<User> findUserByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 
     /**
-     * Finds all users.
+     * Finds a user by its email.
+     *
+     * @param email The email of the user.
+     * @return An Optional containing the user if found, or an empty Optional otherwise.
+     */
+    public Optional<User> findUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    /**
+     * Finds all users with any of the given roles.
+     *
+     * @param roles The set of roles.
+     * @return A list of users with any of the roles.
+     */
+    public List<User> findAllUsersByRoles(Set<RoleName> roles) {
+        // Convert Set<RoleName> to Set<Role>
+        Set<Role> roleSet = roles.stream()
+                .map(roleRepository::findByRoleName)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        // Find all users with the specified roles
+        return userRepository.findByRoles(roleSet);
+    }
+
+    /**
+     * Find user by email
+     *
+     * @param email user email
+     * @return user
+     */
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("No user found with email = " + email));
+    }
+
+    /**
+     * Find user by username
+     *
+     * @param username user username
+     * @return user
+     */
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException("No user found with username = " + username));
+    }
+
+    /**
+     * Returns all the users.
+     *
      * @return A list of all users.
      */
     public List<User> findAllUsers() {
         return userRepository.findAll();
+    }
+
+
+    // Private methods...
+    /**
+     * Validates the given username and email. If a user with the given id exists, it also checks if the username
+     * and email are the same as the existing ones.
+     *
+     * @param id       The id of the existing user.
+     * @param username The username to check.
+     * @param email    The email to check.
+     */
+    private void validateUsernameAndEmail(Long id, String username, String email) {
+        Optional<User> existingUserWithUsername = userRepository.findByUsername(username);
+        Optional<User> existingUserWithEmail = userRepository.findByEmail(email);
+
+        if (existingUserWithUsername.isPresent() && !existingUserWithUsername.get().getId().equals(id)) {
+            throw new DuplicateUserException("Username is already in use: " + username);
+        }
+        if (existingUserWithEmail.isPresent() && !existingUserWithEmail.get().getId().equals(id)) {
+            throw new DuplicateUserException("Email is already in use: " + email);
+        }
+    }
+
+    /**
+     * Hashes the given password.
+     *
+     * @param plainPassword The password to hash.
+     * @return The hashed password.
+     */
+    private @NotNull String hashPassword(String plainPassword) {
+        return BCrypt.hashpw(plainPassword, BCrypt.gensalt());
+    }
+
+    /**
+     * Converts a set of RoleName to a set of Role.
+     *
+     * @param roles The set of RoleName.
+     * @return The set of Role.
+     */
+    private Set<Role> convertToRoleSet(Set<RoleName> roles) {
+        Set<Role> roleSet = new HashSet<>();
+        for (RoleName roleName : roles) {
+            Role role = new Role();
+            role.setName(String.valueOf(roleName));
+            roleSet.add(role);
+        }
+
+        return roleSet;
+    }
+
+    /**
+     * Builds a new User object.
+     *
+     * @param username       The username of the user.
+     * @param email          The email of the user.
+     * @param hashedPassword The hashed password of the user.
+     * @return A new User object.
+     */
+    private User buildNewUser(String username, String email, String hashedPassword) {
+        User user = new User();
+        user.setUsername(username);
+        user.setEmail(email);
+        user.setPasswordHash(hashedPassword);
+
+        return user;
     }
 }

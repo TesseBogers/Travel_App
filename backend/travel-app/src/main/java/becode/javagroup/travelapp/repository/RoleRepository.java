@@ -1,6 +1,7 @@
 package becode.javagroup.travelapp.repository;
 
 import becode.javagroup.travelapp.model.Role;
+import becode.javagroup.travelapp.model.RoleName;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -12,5 +13,5 @@ public interface RoleRepository extends JpaRepository<Role, Long> {
 
     Set<Role> findByPermissionsName(@NotBlank String permissions_name);
 
-    Set<Role> findByNameIn(Set<String> name);
+    Role findByRoleName(RoleName roleName);
 }
