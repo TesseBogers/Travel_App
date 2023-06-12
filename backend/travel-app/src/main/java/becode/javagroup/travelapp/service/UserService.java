@@ -21,6 +21,13 @@ import java.util.stream.Collectors;
 /**
  * UserService is a service class responsible for managing users in the system.
  * It interacts with the UserRepository to store and retrieve user data.
+ * The service annotation is used to mark this class as a service. Service classes are used to separate the business logic from the controller.
+ * Transactional is used to ensure that all operations in this class are executed in a single transaction.
+ * RequiredArgsConstructor is used to create a constructor for this class that takes all final fields as arguments.
+ * @see Service
+ * @see <a href="https://www.baeldung.com/spring-transactional-propagation-isolation">Transactional</a>
+ * @see <a href="https://projectlombok.org/features/constructor">RequiredArgsConstructor</a>
+ *
  */
 @Service
 @Transactional
@@ -29,7 +36,11 @@ public class UserService {
 
     /**
      * The UserRepository is used to store and retrieve user data.
+     * The roleRepository is used to store and retrieve role data.
      * The logger is used to log information, warnings, and errors.
+     * @see UserRepository
+     * @see RoleRepository
+     * @see Logger
      */
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -43,7 +54,6 @@ public class UserService {
      * @param email    the email of the user.
      * @param roles    the roles of the user.
      * @return The created user.
-     * @throws DuplicateUserException if a user with the given username or email already exists.
      */
     public User createUser(String username, String password, String email, Set<RoleName> roles) {
         validateUsernameAndEmail(null, username, email);
@@ -64,6 +74,9 @@ public class UserService {
      * @param user     The user.
      * @param password The password to check.
      * @return True if the passwords match, false otherwise.
+     * BCrypt is used to hash the password.
+     * @see <a href="https://www.baeldung.com/java-password-hashing">Hashing Passwords</a>
+     * @see <a href="https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/crypto/bcrypt/BCrypt.html">BCrypt</a>
      */
     public boolean checkPassword(@NotNull User user, String password) {
         return BCrypt.checkpw(password, user.getPasswordHash());
@@ -111,6 +124,7 @@ public class UserService {
      *
      * @param id The ID of the user.
      * @return The user, or throws UserNotFoundException if the user doesn't exist.
+     * @throws UserNotFoundException  {@inheritDoc}
      */
     public User findUserById(Long id) {
         return userRepository.findById(id)
@@ -142,8 +156,11 @@ public class UserService {
      *
      * @param roles The set of roles.
      * @return A list of users with any of the roles.
+     * @see RoleName
+     * @see Role
+     *
      */
-    public List<User> findAllUsersByRoles(Set<RoleName> roles) {
+    public List<User> findAllUsersByRoles(@NotNull Set<RoleName> roles) {
         // Convert Set<RoleName> to Set<Role>
         Set<Role> roleSet = roles.stream()
                 .map(roleRepository::findByRoleName)
@@ -158,6 +175,7 @@ public class UserService {
      *
      * @param email user email
      * @return user
+     * @throws UserNotFoundException {@inheritDoc}
      */
     public User findByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("No user found with email = " + email));
@@ -168,6 +186,7 @@ public class UserService {
      *
      * @param username user username
      * @return user
+     * @throws UserNotFoundException {@inheritDoc}
      */
     public User findByUsername(String username) {
         return userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException("No user found with username = " + username));
@@ -182,7 +201,6 @@ public class UserService {
         return userRepository.findAll();
     }
 
-
     // Private methods...
     /**
      * Validates the given username and email. If a user with the given id exists, it also checks if the username
@@ -191,6 +209,9 @@ public class UserService {
      * @param id       The id of the existing user.
      * @param username The username to check.
      * @param email    The email to check.
+     * @throws DuplicateUserException If a user with the given username or email already exists.
+     * @throws DuplicateUserException {@inheritDoc}
+     * @see <a href="https://www.baeldung.com/java-optional">Optional</a>
      */
     private void validateUsernameAndEmail(Long id, String username, String email) {
         Optional<User> existingUserWithUsername = userRepository.findByUsername(username);
@@ -209,6 +230,9 @@ public class UserService {
      *
      * @param plainPassword The password to hash.
      * @return The hashed password.
+     * @see <a href="https://www.baeldung.com/java-password-hashing">Hashing Passwords</a>
+     * @see <a href="https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/crypto/bcrypt/BCrypt.html">BCrypt</a>
+     *
      */
     private @NotNull String hashPassword(String plainPassword) {
         return BCrypt.hashpw(plainPassword, BCrypt.gensalt());
@@ -220,7 +244,7 @@ public class UserService {
      * @param roles The set of RoleName.
      * @return The set of Role.
      */
-    private Set<Role> convertToRoleSet(Set<RoleName> roles) {
+    private @NotNull Set<Role> convertToRoleSet(@NotNull Set<RoleName> roles) {
         Set<Role> roleSet = new HashSet<>();
         for (RoleName roleName : roles) {
             Role role = new Role();
@@ -239,7 +263,7 @@ public class UserService {
      * @param hashedPassword The hashed password of the user.
      * @return A new User object.
      */
-    private User buildNewUser(String username, String email, String hashedPassword) {
+    private @NotNull User buildNewUser(String username, String email, String hashedPassword) {
         User user = new User();
         user.setUsername(username);
         user.setEmail(email);

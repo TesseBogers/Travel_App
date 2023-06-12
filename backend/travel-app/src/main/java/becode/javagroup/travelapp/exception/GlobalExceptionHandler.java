@@ -10,15 +10,33 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 /**
  * A Global Exception Handler class to handle all the exceptions.
  * Follows the SOLID, DRY, KISS principles and promotes high cohesion and low coupling.
+ * This class is annotated with the @ControllerAdvice annotation, which makes it a global exception handler.
+ * @see ControllerAdvice
+ * @see <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/bind/annotation/ControllerAdvice.html">ControllerAdvice</a>
+ * @see <a href="https://en.wikipedia.org/wiki/SOLID">SOLID</a>
+ * @see <a href="https://en.wikipedia.org/wiki/Don%27t_repeat_yourself">DRY</a>
+ * @see <a href="https://en.wikipedia.org/wiki/KISS_principle">KISS</a>
+ * @see <a href="https://en.wikipedia.org/wiki/GRASP_(object-oriented_design)#High_cohesion">High cohesion</a>
+ * @see <a href="https://en.wikipedia.org/wiki/GRASP_(object-oriented_design)#Low_coupling">Low coupling</a>
+ *
  */
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    /**
+     * The logger for this class.
+     * @see <a href="https://www.slf4j.org/">SLF4J</a>
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
      * Handles the UserNotFoundException.
+     * Returns a 409 Conflict status code. This is a client error, meaning the user did something wrong.
      * @param exception the exception to handle
+     *                  @see <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/409">409 Conflict</a>
+     *                  @see UserNotFoundException
+     * @see <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status">HTTP status codes</a>
+     * @see Exception
      */
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(UserNotFoundException.class)
@@ -27,8 +45,9 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles the DuplicateUserException.
+     * Handles the DuplicateUserException. Also returns a 409 Conflict status code.
      * @param exception the exception to handle
+     * @see DuplicateUserException
      */
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(DuplicateUserException.class)
@@ -37,8 +56,9 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles the PermissionNotFoundException.
+     * Handles the PermissionNotFoundException. Also returns a 409 Conflict status code.
      * @param exception the exception to handle
+     * @see PermissionNotFoundException
      */
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(PermissionNotFoundException.class)
@@ -47,8 +67,9 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles the RoleNotFoundException.
+     * Handles the RoleNotFoundException. Also returns a 409 Conflict status code.
      * @param exception the exception to handle
+     * @see RoleNotFoundException
      */
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(RoleNotFoundException.class)
@@ -57,8 +78,9 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles the UsernameNotFoundException.
+     * Handles the UsernameNotFoundException. Also returns a 409 Conflict status code.
      * @param exception the exception to handle
+     * @see UsernameNotFoundException
      */
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(UsernameNotFoundException.class)
@@ -67,8 +89,9 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles the InvalidPasswordException.
+     * Handles the InvalidPasswordException. Also returns a 409 Conflict status code.
      * @param exception the exception to handle
+     * @see InvalidPasswordException
      */
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(InvalidPasswordException.class)
@@ -77,8 +100,9 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles the InvalidEmailException.
+     * Handles the InvalidEmailException. Also returns a 409 Conflict status code.
      * @param exception the exception to handle
+     * @see InvalidEmailException
      */
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(InvalidEmailException.class)
@@ -87,8 +111,9 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles the UserNotFoundException.
+     * Handles the UserNotFoundException. Also returns a 409 Conflict status code.
      * @param exception the exception to handle
+     * @see UserNotFoundWithEmailException
      */
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(UserNotFoundWithEmailException.class)
@@ -97,8 +122,10 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handle generic Exception.
+     * Handle generic Exception. Returns a 500 Internal Server Error status code.
      * @param exception The exception to handle
+     *                  @see <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500">500 Internal Server Error</a>
+     *                  @see Exception named as GeneralException
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
