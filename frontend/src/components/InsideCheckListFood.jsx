@@ -5,6 +5,7 @@ export default function InsideCheckListFood() {
 
     return (
         <>
+        <button className="searchButton"> Search</button>
             <h2 className="titleCheckList">Try these out:</h2>
         <ul className="checklist">
             {foodList.map((item, index) => (
@@ -16,7 +17,6 @@ export default function InsideCheckListFood() {
                 </li>
             ))}
         </ul>
-            <button className="searchButton"> Search</button>
 
         </>
     );

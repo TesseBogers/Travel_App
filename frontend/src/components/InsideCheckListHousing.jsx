@@ -5,6 +5,8 @@ export default function InsideCheckListHousing() {
 
     return (
         <>
+        <button className="searchButton"> Search</button>
+
             <h2 className="titleCheckList">Feel at home:</h2>
         <ul className="checklist">
             {foodList.map((item, index) => (
@@ -16,7 +18,6 @@ export default function InsideCheckListHousing() {
                 </li>
             ))}
         </ul>
-            <button className="searchButton"> Search</button>
         </>
     );
 }

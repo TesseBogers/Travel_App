@@ -13,13 +13,17 @@ export default function App() {
 
     return (
         <div className="App">
-            <h1 className="titlebutton">What would you like to do?</h1>
-            <ChooseButton handleButtonClick={handleButtonClick} />
             <div className="containerCheckList">
                 {selectedOption === 'Food' && <InsideCheckListFood />}
                 {selectedOption === 'Attractions' && <InsideCheckListAttractions />}
                 {selectedOption === 'Housing' && <InsideCheckListHousing />}
-            </div>
+                </div>
+                <div className='titleNbutton'>
+                <h1 className="titlebutton">What would you like to do?</h1>
+            <ChooseButton handleButtonClick={handleButtonClick} />
+                </div>
+            
+
         </div>
     );
 }
