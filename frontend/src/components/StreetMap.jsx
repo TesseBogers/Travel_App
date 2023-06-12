@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
-import L from "leaflet";
+import L, { icon, marker } from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 const StreetMap = () => {
@@ -168,7 +168,7 @@ const StreetMap = () => {
                         position={[attraction.lat, attraction.lon]}
                         icon={L.icon({
                             iconSize: [38, 38],
-                            iconUrl: (getIconUrl(attraction)),
+                            iconUrl: ("../icon/markerIcon.png"),
                         })}
                     >
                         <Popup>

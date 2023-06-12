@@ -16,7 +16,7 @@ export default function InsideCheckListFood() {
                     </label>
                 </li>
             ))}
-        </ul>
+        </ul>   
 
         </>
     );
