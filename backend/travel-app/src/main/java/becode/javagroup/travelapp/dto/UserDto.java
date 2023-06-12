@@ -1,11 +1,6 @@
 package becode.javagroup.travelapp.dto;
 
-import becode.javagroup.travelapp.model.RoleName;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-
-import java.util.Set;
 
 @Data
 @Getter
@@ -13,16 +8,9 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDto {
-
-    @NotBlank
-    private String username;
-
-    @NotBlank
-    private String passwordHash;
-
-    @NotBlank
-    @Email
+    private Long id;
+    private String firstName;
+    private String lastName;
     private String email;
-
-    private Set<RoleName> roles;
+    private String password;
 }
