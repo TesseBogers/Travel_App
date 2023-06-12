@@ -20,6 +20,15 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PermissionService {
 
+    /**
+     * The PermissionRepository is injected to be able to store and retrieve permission data.
+     * RequiredArgsConstructor is a lombok annotation that generates the constructors for this field.
+     * The logger is used to log information, warnings and errors.
+     * @see RequiredArgsConstructor
+     * @see PermissionRepository
+     * @see Logger
+     * @see lombok.extern.slf4j.Slf4j
+     */
     private final PermissionRepository permissionRepository;
     private static final Logger logger = LoggerFactory.getLogger(PermissionService.class);
 
@@ -28,7 +37,7 @@ public class PermissionService {
      *
      * @param name the name of the permission.
      * @return the Permission object.
-     * @throws PermissionNotFoundException if no permission is found with the given name.
+     * @throws PermissionNotFoundException {@inheritDoc}
      */
     public Permission findByName(@NotNull PermissionName name) {
         logger.info("Attempting to find permission with name: {}", name.name());

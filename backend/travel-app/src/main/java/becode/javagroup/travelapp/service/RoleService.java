@@ -16,10 +16,24 @@ import org.springframework.stereotype.Service;
 /**
  * RoleService is a service class responsible for managing roles in the system.
  * It interacts with the RoleRepository to store and retrieve role data.
+ * @see Service
+ * @see RequiredArgsConstructor
  */
 @Service
 @RequiredArgsConstructor
 public class RoleService {
+
+    /**
+     * The RoleRepository is injected to be able to store and retrieve role data.
+     * The UserRepository is also injected to be able to assign roles to users.
+     * RequiredArgsConstructor is a lombok annotation that generates the constructors for these fields.
+     * The logger is used to log information, warnings and errors.
+     * @see RequiredArgsConstructor
+     * @see RoleRepository
+     * @see UserRepository
+     * @see Logger
+     * @see lombok.extern.slf4j.Slf4j
+     */
 
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
@@ -30,7 +44,7 @@ public class RoleService {
      *
      * @param name the name of the role.
      * @return the Role object.
-     * @throws RoleNotFoundException if no role is found with the given name.
+     * @throws RoleNotFoundException {@inheritDoc}
      */
     public Role findByName(@NotNull RoleName name) {
         logger.info("Attempting to find role with name: {}", name.name());
@@ -44,6 +58,7 @@ public class RoleService {
      *
      * @param role the role to be created.
      * @return the created Role object.
+     * The @NotNull annotation is used to prevent the role from being null.
      */
     public Role createRole(@NotNull Role role) {
         logger.info("Creating new role: {}", role.getName());
@@ -80,7 +95,7 @@ public class RoleService {
      * @param userId the id of the user.
      * @param roleName the name of the role to be assigned.
      * @return the User object after the role has been assigned.
-     * @throws RoleNotFoundException if no role is found with the given name.
+     * @throws RoleNotFoundException {@inheritDoc}
      */
     public User assignRoleToUser(Long userId, RoleName roleName) {
         User user = userRepository.findById(userId).orElseThrow(
@@ -100,7 +115,7 @@ public class RoleService {
      * @param userId the id of the user.
      * @param roleName the name of the role to be removed.
      * @return the User object after the role has been removed.
-     * @throws RoleNotFoundException if the user doesn't have the role or no role is found with the given name.
+     * @throws RoleNotFoundException {@inheritDoc}
      */
     public User removeRoleFromUser(Long userId, RoleName roleName) {
         User user = userRepository.findById(userId).orElseThrow(
