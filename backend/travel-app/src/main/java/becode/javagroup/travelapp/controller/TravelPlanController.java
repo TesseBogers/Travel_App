@@ -15,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/travelplans")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
 public class TravelPlanController {
 
     private final TravelPlanService travelPlanService;

@@ -29,6 +29,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
 public class UserController {
     /**
      * The UserService that is used to perform the actual operations.
