@@ -138,7 +138,7 @@ const StreetMap = () => {
             <MapContainer
                 center={position}
                 zoom={16}
-                style={{ width: "60vw", height: "40vh"}}
+                style={{ width: "80vw", height: "40vh"}}
                 whenCreated={(map) => {
                     if (selectPosition) {
                         map.setView(
