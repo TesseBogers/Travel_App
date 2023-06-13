@@ -13,7 +13,6 @@ import java.util.List;
 @RequestMapping("/api/food")
 @AllArgsConstructor
 public class FoodController {
-
     private final FoodRepository foodRepository;
 
     @GetMapping
