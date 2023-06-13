@@ -1,20 +1,11 @@
 package becode.javagroup.travelapp.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.*;
 import lombok.*;
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
 
 /**
- * A TravelPlan class to represent the travel plans of a user in the system.
- * This class is annotated with the @Entity annotation, which makes it a JPA entity.
- * It is also annotated with @Data, @Builder, @AllArgsConstructor, @NoArgsConstructor.
- * These annotations are provided by the Lombok library and reduce boilerplate code.
- * @see Entity
- * @see <a href="https://www.baeldung.com/intro-to-project-lombok">Lombok</a>
- * @see <a href="https://www.baeldung.com/jpa-entity-table">Table</a>
+ * This class represents a travel plan. It is annotated with JPA annotations to allow it to be mapped to a database for persistence.
  */
 @Entity
 @Data
@@ -25,51 +16,39 @@ import java.time.LocalDate;
 public class TravelPlan {
 
     /**
-     * The id of this travel plan.
+     * The id is a unique identifier for this travel plan.
      * @see Id
      * @see GeneratedValue
      * @see GenerationType
      * @see Setter
      * @see AccessLevel
      */
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(AccessLevel.NONE)
     private Long id;
 
     /**
-     * The destination of this travel plan.
-     * @see NotNull
-     * @see NotEmpty
-     * @see Column
+     * The field destination is a String that represents the destination of the travel plan. It is a required field, hence cannot be null or empty or blank.
      */
-    @NotNull(message = "Destination cannot be null")
-    @NotEmpty(message = "Destination cannot be empty")
     @Column(name = "destination", nullable = false)
     private String destination;
 
     /**
-     * The start date of this travel plan.
-     * @see JsonFormat
-     * @see PastOrPresent
-     * @see Column
+     * The field startDate is a LocalDate that represents the start date of the travel plan. It is a required field, hence cannot be null.
      */
-    @JsonFormat(pattern = "dd-MM-yyyy")
-    @PastOrPresent(message = "Start date cannot be in the future")
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 
     /**
-     * The end date of this travel plan.
-     * @see FutureOrPresent
-     * @see Column
+     * The field endDate is a LocalDate that represents the end date of the travel plan. It is a required field, hence cannot be null.
      */
-    @FutureOrPresent(message = "End date cannot be in the past")
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
 
     /**
-     * The user associated with this travel plan.
+     * The field user is a User object that represents the user that created the travel plan. It is a required field, hence cannot be null.
      * @see ManyToOne
      * @see JoinColumn
      * @see User

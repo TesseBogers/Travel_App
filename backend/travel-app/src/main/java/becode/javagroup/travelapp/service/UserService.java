@@ -2,6 +2,7 @@ package becode.javagroup.travelapp.service;
 
 import becode.javagroup.travelapp.exception.DuplicateUserException;
 import becode.javagroup.travelapp.exception.UserNotFoundException;
+import becode.javagroup.travelapp.model.Permission;
 import becode.javagroup.travelapp.model.Role;
 import becode.javagroup.travelapp.model.RoleName;
 import becode.javagroup.travelapp.model.User;
@@ -60,12 +61,26 @@ public class UserService {
 
         String hashedPassword = hashPassword(password);
         User user = buildNewUser(username, email, hashedPassword);
-        Set<Role> roleSet = convertToRoleSet(roles);
+        Set<Role> roleSet = fetchRoles(roles);
         user.setRoles(roleSet);
         userRepository.save(user);
         logger.info("User created with ID: {}", user.getId());
 
         return user;
+    }
+
+    /**
+     * Fetches roles from the database.
+     *
+     * @param roles The set of RoleName.
+     * @return The set of Role.
+     */
+    private @NotNull Set<Role> fetchRoles(@NotNull Set<RoleName> roles) {
+        return roles.stream()
+                .map(roleRepository::findByRoleName)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -135,20 +150,24 @@ public class UserService {
      * Finds a user by its username.
      *
      * @param username The username of the user.
-     * @return An Optional containing the user if found, or an empty Optional otherwise.
+     * @return An User instance or throws an exception if not found.
+     * @throws UserNotFoundException if the user doesn't exist.
      */
-    public Optional<User> findUserByUsername(String username) {
-        return userRepository.findByUsername(username);
+    public User findUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("No user found with username = " + username));
     }
 
     /**
      * Finds a user by its email.
      *
      * @param email The email of the user.
-     * @return An Optional containing the user if found, or an empty Optional otherwise.
+     * @return An User instance or throws an exception if not found.
+     * @throws UserNotFoundException if the user doesn't exist.
      */
-    public Optional<User> findUserByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("No user found with email = " + email));
     }
 
     /**
@@ -164,11 +183,13 @@ public class UserService {
         // Convert Set<RoleName> to Set<Role>
         Set<Role> roleSet = roles.stream()
                 .map(roleRepository::findByRoleName)
-                .filter(Objects::nonNull)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .collect(Collectors.toSet());
         // Find all users with the specified roles
-        return userRepository.findByRoles(roleSet);
+        return userRepository.findByRolesIn(roleSet);
     }
+
 
     /**
      * Find user by email
@@ -214,15 +235,17 @@ public class UserService {
      * @see <a href="https://www.baeldung.com/java-optional">Optional</a>
      */
     private void validateUsernameAndEmail(Long id, String username, String email) {
-        Optional<User> existingUserWithUsername = userRepository.findByUsername(username);
-        Optional<User> existingUserWithEmail = userRepository.findByEmail(email);
+        userRepository.findByUsername(username).ifPresent(user -> {
+            if (id == null || !id.equals(user.getId())) {
+                throw new DuplicateUserException("Username is already in use: " + username);
+            }
+        });
 
-        if (existingUserWithUsername.isPresent() && !existingUserWithUsername.get().getId().equals(id)) {
-            throw new DuplicateUserException("Username is already in use: " + username);
-        }
-        if (existingUserWithEmail.isPresent() && !existingUserWithEmail.get().getId().equals(id)) {
-            throw new DuplicateUserException("Email is already in use: " + email);
-        }
+        userRepository.findByEmail(email).ifPresent(user -> {
+            if (id == null || !id.equals(user.getId())) {
+                throw new DuplicateUserException("Email is already in use: " + email);
+            }
+        });
     }
 
     /**
@@ -245,10 +268,14 @@ public class UserService {
      * @return The set of Role.
      */
     private @NotNull Set<Role> convertToRoleSet(@NotNull Set<RoleName> roles) {
+        logger.info("Converting roles to Role set...");
         Set<Role> roleSet = new HashSet<>();
         for (RoleName roleName : roles) {
+            logger.info("Converting role: {}", roleName);
             Role role = new Role();
+            logger.info("Setting role name: {}", roleName);
             role.setName(String.valueOf(roleName));
+            logger.info("Adding role to set: {}", role);
             roleSet.add(role);
         }
 
@@ -264,11 +291,68 @@ public class UserService {
      * @return A new User object.
      */
     private @NotNull User buildNewUser(String username, String email, String hashedPassword) {
+        logger.info("Building new user...");
         User user = new User();
+        logger.info("Setting username: {}", username);
         user.setUsername(username);
+        logger.info("Setting email: {}", email);
         user.setEmail(email);
         user.setPasswordHash(hashedPassword);
 
         return user;
+    }
+
+    /**
+     * Find users who are traveling.
+     *
+     * @return List of users with the role ROLE_TRAVELER.
+     */
+    public List<User> findUsersTraveling() {
+        logger.info("Finding users traveling...");
+        return userRepository.findUsersTraveling(RoleName.ROLE_TRAVELER);
+    }
+
+    /**
+     * Find users with the given role.
+     *
+     * @param roleName The name of the role to filter users by.
+     * @return List of users with the specified role.
+     */
+    public List<User> findUsersWithRole(RoleName roleName) {
+        logger.info("Finding users with role: {}", roleName);
+        return userRepository.findUsersWithRole(roleName);
+    }
+
+    /**
+     * Find users with the given permission.
+     *
+     * @param permissionName The name of the permission to filter users by.
+     * @return List of users with the specified permission.
+     */
+    public List<User> findUsersWithPermission(String permissionName) {
+        logger.info("Finding users with permission: {}", permissionName);
+        return userRepository.findUsersWithPermission(permissionName);
+    }
+
+    /**
+     * Retrieve all roles for the given user.
+     *
+     * @param id The ID of the user.
+     * @return Set of roles assigned to the user.
+     */
+    public Set<Role> getRolesForUser(Long id) {
+        logger.info("Getting roles for user with id: {}", id);
+        return userRepository.getRolesForUser(id);
+    }
+
+    /**
+     * Retrieve all permissions for the given user.
+     *
+     * @param id The ID of the user.
+     * @return Set of permissions assigned to the user.
+     */
+    public Set<Permission> getPermissionsForUser(Long id) {
+        logger.info("Getting permissions for user with id: {}", id);
+        return userRepository.getPermissionsForUser(id);
     }
 }

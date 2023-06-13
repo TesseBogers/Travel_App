@@ -1,61 +1,77 @@
 package becode.javagroup.travelapp.controller;
 
-import becode.javagroup.travelapp.model.TravelPlan;
-import becode.javagroup.travelapp.repository.TravelPlanRepository;
-import jakarta.validation.Valid;
+import becode.javagroup.travelapp.dto.TravelPlanDto;
+import becode.javagroup.travelapp.service.TravelPlanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
+/**
+ * REST controller for managing travel plans.
+ * This class delegates the business logic to the TravelPlanService.
+ */
 @RestController
 @RequestMapping("/api/travelplans")
 @RequiredArgsConstructor
 public class TravelPlanController {
-    private final TravelPlanRepository travelPlanRepository;
 
+    private final TravelPlanService travelPlanService;
+
+    /**
+     * Retrieves all travel plans.
+     *
+     * @return A response entity containing a list of all travel plans.
+     */
     @GetMapping
-    public List<TravelPlan> getAllTravelPlans() {
-        return travelPlanRepository.findAll();
+    public ResponseEntity<List<TravelPlanDto>> getAllTravelPlans() {
+        return ResponseEntity.ok(travelPlanService.getAllTravelPlans());
     }
 
-    @PostMapping
-    public TravelPlan createTravelPlan(@Valid @RequestBody TravelPlan travelPlan) {
-        return travelPlanRepository.save(travelPlan);
-    }
-
+    /**
+     * Retrieves a specific travel plan by its ID.
+     *
+     * @param id The ID of the travel plan to retrieve.
+     * @return A response entity containing the requested travel plan.
+     */
     @GetMapping("/{id}")
-    public ResponseEntity<TravelPlan> getTravelPlanById(@PathVariable(value = "id") Long travelPlanId) {
-        Optional<TravelPlan> travelPlan = travelPlanRepository.findById(travelPlanId);
-        return travelPlan.map(plan -> ResponseEntity.ok().body(plan)).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<TravelPlanDto> getTravelPlan(@PathVariable Long id) {
+        return ResponseEntity.ok(travelPlanService.getTravelPlan(id));
     }
 
+    /**
+     * Creates a new travel plan.
+     *
+     * @param travelPlanDto The travel plan data to create a new travel plan from.
+     * @return A response entity containing the created travel plan.
+     */
+    @PostMapping
+    public ResponseEntity<TravelPlanDto> createTravelPlan(@RequestBody TravelPlanDto travelPlanDto) {
+        return ResponseEntity.ok(travelPlanService.createTravelPlan(travelPlanDto));
+    }
+
+    /**
+     * Updates a specific travel plan by its ID.
+     *
+     * @param id            The ID of the travel plan to update.
+     * @param travelPlanDto The travel plan data to update the travel plan with.
+     * @return A response entity containing the updated travel plan.
+     */
     @PutMapping("/{id}")
-    public ResponseEntity<TravelPlan> updateTravelPlan(@PathVariable(value = "id") Long travelPlanId, @Valid @RequestBody TravelPlan travelPlanDetails) {
-        Optional<TravelPlan> travelPlan = travelPlanRepository.findById(travelPlanId);
-        if (travelPlan.isPresent()) {
-            TravelPlan updatedTravelPlan = travelPlan.get();
-            updatedTravelPlan.setDestination(travelPlanDetails.getDestination());
-            updatedTravelPlan.setStartDate(travelPlanDetails.getStartDate());
-            updatedTravelPlan.setEndDate(travelPlanDetails.getEndDate());
-            updatedTravelPlan.setUser(travelPlanDetails.getUser());
-            travelPlanRepository.save(updatedTravelPlan);
-            return ResponseEntity.ok(updatedTravelPlan);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<TravelPlanDto> updateTravelPlan(@PathVariable Long id, @RequestBody TravelPlanDto travelPlanDto) {
+        return ResponseEntity.ok(travelPlanService.updateTravelPlan(id, travelPlanDto));
     }
 
+    /**
+     * Deletes a specific travel plan by its ID.
+     *
+     * @param id The ID of the travel plan to delete.
+     * @return A response entity indicating success (HTTP 200).
+     */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTravelPlan(@PathVariable(value = "id") Long travelPlanId) {
-        Optional<TravelPlan> travelPlan = travelPlanRepository.findById(travelPlanId);
-        if (travelPlan.isPresent()) {
-            travelPlanRepository.delete(travelPlan.get());
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Void> deleteTravelPlan(@PathVariable Long id) {
+        travelPlanService.deleteTravelPlan(id);
+        return ResponseEntity.ok().build();
     }
 }

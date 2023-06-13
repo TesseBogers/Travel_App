@@ -4,6 +4,8 @@ import becode.javagroup.travelapp.dto.UserDto;
 import becode.javagroup.travelapp.exception.DuplicateUserException;
 import becode.javagroup.travelapp.exception.RoleNotFoundException;
 import becode.javagroup.travelapp.exception.UserNotFoundException;
+import becode.javagroup.travelapp.model.Permission;
+import becode.javagroup.travelapp.model.Role;
 import becode.javagroup.travelapp.model.RoleName;
 import becode.javagroup.travelapp.model.User;
 import becode.javagroup.travelapp.service.RoleService;
@@ -81,8 +83,11 @@ public class UserController {
             return ResponseEntity.ok(user);
         } catch (DuplicateUserException exception) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        } catch (RoleNotFoundException exception) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
+
 
     /**
      * Update a user.
@@ -180,5 +185,71 @@ public class UserController {
     @GetMapping("/email/{email}")
     public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
         return ResponseEntity.of(Optional.ofNullable(userService.findByEmail(email)));
+    }
+
+    /**
+     * Get all users who are currently traveling.
+     * @return All users who are currently traveling.
+     */
+    @GetMapping("/traveling")
+    public ResponseEntity<List<User>> getUsersTraveling() {
+        List<User> users = userService.findUsersTraveling();
+        return users.isEmpty()
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(users);
+    }
+
+    /**
+     * Get all users who have a specific role.
+     * @param roleName The name of the role to search for passed as a path variable.
+     * @return All users who have the given role.
+     */
+    @GetMapping("/roles/{roleName}")
+    public ResponseEntity<List<User>> getUsersWithRole(@PathVariable RoleName roleName) {
+        List<User> users = userService.findUsersWithRole(roleName);
+        return users.isEmpty()
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(users);
+    }
+
+    /**
+     * Get all users who have a specific permission.
+     * @param permissionName The name of the permission to search for passed as a path variable.
+     * @return All users who have the given permission.
+     */
+    @GetMapping("/permissions/{permissionName}")
+    public ResponseEntity<List<User>> getUsersWithPermission(@PathVariable String permissionName) {
+        List<User> users = userService.findUsersWithPermission(permissionName);
+        return users.isEmpty()
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(users);
+    }
+
+    /**
+     * Get all roles for a specific user.
+     * @param id The ID of the user to get roles for passed as a path variable.
+     * @return All roles for the given user.
+     */
+    @GetMapping("/{id}/roles")
+    public ResponseEntity<Set<Role>> getRolesForUser(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(userService.getRolesForUser(id));
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    /**
+     * Get all permissions for a specific user.
+     * @param id The ID of the user to get permissions for passed as a path variable.
+     * @return All permissions for the given user.
+     */
+    @GetMapping("/{id}/permissions")
+    public ResponseEntity<Set<Permission>> getPermissionsForUser(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(userService.getPermissionsForUser(id));
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

@@ -7,7 +7,7 @@ import lombok.*;
 import java.time.LocalDate;
 
 /**
- * A Profile class to represent the profile of a user in the system.
+ * A UserProfile class to represent the userProfile of a user in the system.
  * This class is annotated with the @Entity annotation, which makes it a JPA entity.
  * It is also annotated with @Data, @Builder, @AllArgsConstructor, @NoArgsConstructor, @EqualsAndHashCode and @ToString.
  * These annotations are provided by the Lombok library and reduce boilerplate code.
@@ -27,10 +27,10 @@ import java.time.LocalDate;
 @EqualsAndHashCode(exclude = {"user"})
 @ToString(exclude = {"user"})
 @Table(name = "profiles")
-public class Profile {
+public class UserProfile {
 
     /**
-     * The id of this profile.
+     * The id of this userProfile.
      * @see Id
      * @see GeneratedValue
      * @see GenerationType
@@ -43,7 +43,7 @@ public class Profile {
     private Long id;
 
     /**
-     * The first name associated with this profile.
+     * The first name associated with this userProfile.
      * @see NotBlank
      * @see Column
      */
@@ -52,7 +52,7 @@ public class Profile {
     private String firstName;
 
     /**
-     * The last name associated with this profile.
+     * The last name associated with this userProfile.
      * @see NotBlank
      * @see Column
      */
@@ -61,7 +61,7 @@ public class Profile {
     private String lastName;
 
     /**
-     * The date of birth associated with this profile.
+     * The date of birth associated with this userProfile.
      * @see Past
      * @see Column
      */
@@ -70,31 +70,31 @@ public class Profile {
     private LocalDate dateOfBirth;
 
     /**
-     * The country associated with this profile.
+     * The country associated with this userProfile.
      * @see Column
      */
     @Column(name = "country")
     private String country;
 
     /**
-     * The preferred language associated with this profile.
+     * The preferred language associated with this userProfile.
      * @see Column
      */
     @Column(name = "preferred_language")
     private String preferredLanguage;
 
     /**
-     * The preferred currency associated with this profile.
+     * The preferred currency associated with this userProfile.
      * @see Column
      */
     @Column(name = "preferred_currency")
     private String preferredCurrency;
 
     /**
-     * The user associated with this profile.
+     * The user associated with this userProfile.
      * @see OneToOne
      * @see User
      */
-    @OneToOne(mappedBy = "profile")
+    @OneToOne(mappedBy = "userProfile")
     private User user;
 }
