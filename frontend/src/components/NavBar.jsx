@@ -132,9 +132,9 @@ const Navbar = () => {
                                     </span>
                                 </Link>
                             </div>
-                            <Link to="/trip-organizer" className="self-center">
-                                <a  className="flex flex-row gap-2 cursor-pointer"><FontAwesomeIcon icon={faUser} className="text-white h-[1.5rem] w-[1.5rem]"/>
-                                    <span className="self-center">Sign In</span> </a>
+                            <Link to="/trip-organizer" className="flex flex-row gap-2 cursor-pointer self-center">
+                                <FontAwesomeIcon icon={faUser} className="text-white h-[1.5rem] w-[1.5rem]"/>
+                                <span className="self-center">Sign In</span>
                             </Link>
                         </div>
 
