@@ -1,7 +1,9 @@
+import StreetMap from "../components/StreetMap"
+
 const Recreation = () => {
     return (
         <>
-            <h1>Recreation</h1>
+            <StreetMap/>
         </>
     )
 }
