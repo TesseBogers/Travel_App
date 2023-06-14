@@ -122,7 +122,7 @@ const ChatRoom = () => {
   return (
     <div className="font-signifka-negative container relative ">
       {userData.connected ? (
-        <div className="chat-box ">
+        <div className="chat-box p-12">
           <div className="member-list  w-1/5 ">
             <ul>
               <li
@@ -173,7 +173,7 @@ const ChatRoom = () => {
                 ))}
               </ul>
 
-              <div className="send-message w-full">
+              <div className="send-message spacing-x-2 flex w-full flex-wrap lg:flex-nowrap">
                 <input
                   type="text"
                   className="input-message w-11/12 border border-palette-light-color-2 "
@@ -183,7 +183,7 @@ const ChatRoom = () => {
                 />
                 <button
                   type="button"
-                  className="send-button mx-5  bg-palette-light-color-2"
+                  className="send-button mx-5 my-2   bg-palette-light-color-2"
                   onClick={sendValue}
                 >
                   send
@@ -216,7 +216,7 @@ const ChatRoom = () => {
                 ))}
               </ul>
 
-              <div className="send-message ">
+              <div className="send-message  spacing-x-2 flex w-full flex-wrap lg:flex-nowrap">
                 <input
                   type="text"
                   className="input-message border border-palette-light-color-2"
@@ -226,7 +226,7 @@ const ChatRoom = () => {
                 />
                 <button
                   type="button"
-                  className="send-button mx-5 bg-palette-light-color-2 "
+                  className="send-button mx-5 my-2 bg-palette-light-color-2"
                   onClick={sendPrivateValue}
                 >
                   send

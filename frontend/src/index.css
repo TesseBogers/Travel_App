@@ -14,11 +14,9 @@ input {
   font-size: 1.2em;
 }
 button {
-  border: none;
   padding: 10px;
   color: #fff;
   font-size: 1.2em;
-  font-weight: bold;
 }
 
 .container {
@@ -35,7 +33,6 @@ button {
   flex-direction: row;
 }
 .chat-box {
-  border-width: 20px;
   margin: 40px 50px;
   height: 600px;
   padding: 10px;
@@ -65,7 +62,6 @@ button {
 
 .input-message {
   width: 90%;
-  border-radius: 50px;
 }
 
 ul {
@@ -73,30 +69,12 @@ ul {
   list-style-type: none;
 }
 .send-button {
-  width: 10%;
+  width: 15%;
   border-radius: 50px;
   margin-left: 5px;
   cursor: pointer;
 }
 
-.avatar {
-  background-color: cornflowerblue;
-  padding: 3px 5px;
-  border-radius: 5px;
-  color: #fff;
-}
-.avatar.self {
-  color: #000;
-  background-color: greenyellow;
-}
-.message {
-  padding: 5px;
-  width: auto;
-  display: flex;
-  flex-direction: row;
-  box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
-  margin: 5px 10px;
-}
 .message-data {
   padding: 5px;
 }
