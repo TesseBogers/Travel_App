@@ -1,11 +1,11 @@
-import "./js/init";
-import React from "react";
-import ReactDOM from "react-dom/client";
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App.jsx'
+import './index.css'
 
-import ChatRoom from "./components/chat";
-
-ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <ChatRoom />
-  </React.StrictMode>
-);
+ReactDOM.createRoot(document.getElementById('root')).render(<React.StrictMode>
+    <AuthProvider>
+        <App/>
+        <ChatRoom />
+    </AuthProvider>
+</React.StrictMode>,)

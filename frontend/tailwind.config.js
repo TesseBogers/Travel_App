@@ -12,7 +12,7 @@ export default {
           'roboto': ['Roboto', 'sans-serif'],
           'signika-negative': ['Signika Negative', 'sans-serif'],
         },
-      fontWeight: {
+        fontWeight: {
             // font weights for tailwind font weights
         'light': 300,
         'normal': 400,
@@ -20,16 +20,15 @@ export default {
         'bold': 700,
         'black': 900,
       },
-      screens: {
+        screens: {
             // screen sizes for tailwind breakpoints for responsive design
-        sm: '480px',
-        md: '768px',
-        lg: '976px',
-        xl: '1440px',
-      },
-      colors: {
-          transparent: 'transparent',
-          current: 'currentColor',
+            sm: '480px',
+            md: '768px',
+            lg: '976px',
+            xl: '1440px' },
+        colors: {
+        transparent: 'transparent',
+        current: 'currentColor',
         'palette-light': {
             // colors in the same order as in the java legend docx for light mode
             "color-1": '#e9f2f6',
@@ -97,6 +96,12 @@ export default {
           '60-light': 'hsl(0, 0%, 79%)',
           '90-light': 'hsl(0, 0%, 95%)',
         },
+            zIndex: {
+                '-1': '-1',
+            },
+            scale: {
+                '1': '1',
+            },
       }
     },
   },
