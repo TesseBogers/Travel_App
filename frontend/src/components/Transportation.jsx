@@ -3,10 +3,10 @@ import TranspImage from "../assets/images/avion-aerien.png"
 
 const Transportation = () => {
   const [transportation, setTransportation] = useState({
-    transpType: '',
-    transpPrice: 0,
-    transpDepart: '',
-    transpArriv: '',
+    transportationType: '',
+    transportationPrice: 0,
+    transportationDeparture: '',
+    transportationArrival: '',
   });
 
   const [savedTransportation, setSavedTransportation] = useState(null);
@@ -16,29 +16,50 @@ const Transportation = () => {
     setTransportation((prevTransportation) => ({ ...prevTransportation, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Save the housing data or send it to the backend
-    setTransportation({
-      transpType: '',
-      transpPrice: 0,
-      transpDepart: '',
-      transpArriv: '',
-    })
-  };
+const API_BASE_URL = 'http://localhost:4000/api/transportation';
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  try {
+    const response = await fetch(API_BASE_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(transportation),
+    });
+
+    if (response.ok) {
+      const savedTransportation = await response.json();
+      setSavedTransportation(savedTransportation);
+      setTransportation({
+        transportationType: '',
+        transportationPrice: 0,
+        transportationDeparture: '',
+        transportationArrival: '',
+      });
+    } else {
+      throw new Error('Failed to save transportation');
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-      <div className="transportation flex flex-row">
-          <img src={TranspImage} alt="Transportation" className="logo" />
+    <div className="flex">
+      <div className='w-1/4'>
+        <img src={TranspImage} alt="Transportation" className='logo'  />
       </div>
+      <div className="w-1/2 mx-2">
+      <form onSubmit={handleSubmit}>
         <div>
           <label>Transportation Type :</label>
           <input
           type="text"
-          name="transpType"
-          value={transportation.transpType}
+          name="transportationType"
+          value={transportation.transportationType}
           onChange={handleInputChange}
           />
         </div>
@@ -46,8 +67,8 @@ const Transportation = () => {
           <label>Transportation Price:</label>
           <input
           type="number"
-          name="TranspPrice"
-          value={transportation.transpPrice}
+          name="transportationPrice"
+          value={transportation.transportationPrice}
           onChange={handleInputChange}
           />
         </div>
@@ -55,8 +76,8 @@ const Transportation = () => {
           <label>Transportation Departure:</label>
           <input
           type="text"
-          name="transpDepart"
-          value={transportation.transpDepart}
+          name="transportationDeparture"
+          value={transportation.transportationDeparture}
           onChange={handleInputChange}
           />
         </div>
@@ -64,23 +85,25 @@ const Transportation = () => {
           <label>Transportation Arrival:</label>
           <input
           type="text"
-          name="transpArriv"
-          value={transportation.transpArriv}
+          name="transportationArrival"
+          value={transportation.transportationArrival}
           onChange={handleInputChange}
           />
         </div>
         <button type="submit">Save</button>
       </form>
+      </div>
 
+      <div className='w-1/4'>
       {savedTransportation && (
         <div>
-          <h2>Saved Transportation Data : </h2>
-          <p>Transportation Type : {savedTransportation.transpType}</p>
-          <p>Transportation Price : {savedTransportation.transpPrice}</p>
-          <p>Transportation Departure : {savedTransportation.transpDepart}</p>
-          <p>Transportation Arrival : {savedTransportation.transpArriv}</p>
+          <p>Transportation Type : {savedTransportation.transportationpType}</p>
+          <p>Transportation Price : {savedTransportation.transportationPrice}</p>
+          <p>Transportation Departure : {savedTransportation.transportationDeparture}</p>
+          <p>Transportation Arrival : {savedTransportation.transportationArrival}</p>
         </div>
       )}
+      </div>
     </div>
   );
 };

@@ -15,22 +15,44 @@ const Housing = () => {
     setHousing((prevHousing) => ({ ...prevHousing, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Save the housing data or send it to the backend
-    setHousing({
-      housingName: '',
-      housingPrice: 0,
-      housingAddress: '',
-    })
-  };
+const API_BASE_URL = 'http://localhost:4000/api/housing';
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  try {
+    const response = await fetch(API_BASE_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(housing),
+    });
+
+    if (response.ok) {
+      const savedHousing = await response.json();
+      setSavedHousing(savedHousing);
+      setHousing({
+        housingName: '',
+        housingPrice: 0,
+        housingAddress: '',
+      });
+    } else {
+      throw new Error('Failed to save housing');
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-      <div className="housing flex flex-row">
-          <img src={housingImage} alt="Housing" className="logo" />
+    <div className="flex">
+      <div className="w-1/4">
+        <img src={housingImage} alt="Housing" className="logo" />
       </div>
+      <div className="w-1/2 mx-2">
+      <form onSubmit={handleSubmit}>
         <div>
           <label>Housing Name:</label>
           <input
@@ -60,15 +82,17 @@ const Housing = () => {
         </div>
         <button type="submit">Save</button>
       </form>
+      </div>
 
+      <div className="w-1/4">
       {savedHousing && (
         <div>
-          <h2>{savedHousing.housingName}</h2>
           <p>Housing Name : {savedHousing.housingName}</p>
           <p>Housing Price : {savedHousing.housingPrice}</p>
           <p>Housing Address : {savedHousing.housingAddress}</p>
         </div>
       )}
+    </div>
     </div>
   );
 };

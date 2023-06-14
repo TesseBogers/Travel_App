@@ -15,16 +15,34 @@ const Food = () => {
     setFood((prevFood) => ({ ...prevFood, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const API_BASE_URL = 'http://localhost:4000/api/food';
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Save the food data or send it to the backend
-    setSavedFood(food);
-    // Reset the form
-    setFood({
-      foodName: '',
-      foodPrice: 0,
-      foodAddress: '',
-    });
+    
+    try {
+      const response = await fetch(API_BASE_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(food),
+      });
+  
+      if (response.ok) {
+        const savedFood = await response.json();
+        setSavedFood(savedFood);
+        setFood({
+          foodName: '',
+          foodPrice: 0,
+          foodAddress: '',
+        });
+      } else {
+        throw new Error('Failed to save food');
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -67,7 +85,6 @@ const Food = () => {
       <div className="w-1/4">
         {savedFood && (
           <div>
-            <h2>Saved Food Data:</h2>
             <p>Food Name: {savedFood.foodName}</p>
             <p>Food Price: {savedFood.foodPrice}</p>
             <p>Food Address: {savedFood.foodAddress}</p>

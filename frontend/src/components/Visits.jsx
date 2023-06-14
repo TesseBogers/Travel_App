@@ -3,9 +3,9 @@ import visitsImage from "../assets/images/holstentor.png"
 
 const Visits = () => {
   const [visits, setVisits] = useState({
-    visitsName: '',
-    visitsPrice: 0,
-    visitsAddress: '',
+    visitName: '',
+    visitPrice: 0,
+    visitAddress: '',
   });
 
   const [savedVisits, setSavedVisits] = useState(null);
@@ -15,28 +15,49 @@ const Visits = () => {
     setVisits((prevVisits) => ({ ...prevVisits, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Save the visits data or send it to the backend
-    setVisits({
-      visitsName: '',
-      visitsPrice: 0,
-      visitsAddress: '',
-    })
-  };
+const API_BASE_URL = 'http://localhost:4000/api/visits';
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  try {
+    const response = await fetch(API_BASE_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(visits),
+    });
+
+    if (response.ok) {
+      const savedVisits = await response.json();
+      setSavedVisits(savedVisits);
+      setVisits({
+        visitName: '',
+        visitPrice: 0,
+        visitAddress: '',
+      });
+    } else {
+      throw new Error('Failed to save visits');
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-      <div className="visits flex flex-row">
-          <img src={visitsImage} alt="Visits" className="logo" />
+    <div className='flex'>
+      <div className="w-1/4">
+        <img src={visitsImage} alt="Visits" className="logo" />
       </div>
+      <div className="w-1/2 mx-2">
+      <form onSubmit={handleSubmit}>
         <div>
           <label>Visits Name:</label>
           <input
           type="text"
-          name="visitsName"
-          value={visits.visitsName}
+          name="visitName"
+          value={visits.visitName}
           onChange={handleInputChange}
           />
         </div>
@@ -44,8 +65,8 @@ const Visits = () => {
           <label>Visits Price:</label>
           <input
           type="number"
-          name="visitsPrice"
-          value={visits.visitsPrice}
+          name="visitPrice"
+          value={visits.visitPrice}
           onChange={handleInputChange}
           />
         </div>
@@ -53,22 +74,24 @@ const Visits = () => {
           <label>Visits Address:</label>
           <input
           type="text"
-          name="visitsAdress"
-          value={visits.visitsAddress}
+          name="visitAddress"
+          value={visits.visitAddress}
           onChange={handleInputChange}
           />
         </div>
         <button type="submit">Save</button>
       </form>
+      </div>
 
+      <div className="w-1/4">
       {savedVisits && (
         <div>
-          <h3>{savedVisits.visitsName}</h3>
-          <p>Housing Name : {savedVisits.visitsName}</p>
-          <p>Housing Price : {savedVisits.visitsPrice}</p>
-          <p>Housing Address : {savedVisits.visitsAddress}</p>
+          <p>Housing Name : {savedVisits.visitName}</p>
+          <p>Housing Price : {savedVisits.visitPrice}</p>
+          <p>Housing Address : {savedVisits.visitAddress}</p>
         </div>
       )}
+      </div>
       </div>
   );
 };
