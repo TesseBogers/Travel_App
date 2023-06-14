@@ -123,13 +123,13 @@ const ChatRoom = () => {
     <div className="font-signifka-negative container relative ">
       {userData.connected ? (
         <div className="chat-box ">
-          <div className="member-list  w-1/5">
+          <div className="member-list  w-1/5 ">
             <ul>
               <li
                 onClick={() => {
                   setTab("CHATROOM");
                 }}
-                className={`   bg-palette-light-color-2   ${
+                className={`bg-palette-light-color-2 px-3   ${
                   tab === "CHATROOM" && "active"
                 } `}
               >
@@ -140,7 +140,7 @@ const ChatRoom = () => {
                   onClick={() => {
                     setTab(name);
                   }}
-                  className={`member  ${tab === name && "active"} `}
+                  className={`member px-3 ${tab === name && "active"} `}
                   key={index}
                 >
                   {name}
@@ -219,7 +219,7 @@ const ChatRoom = () => {
               <div className="send-message ">
                 <input
                   type="text"
-                  className="input-message  border-palette-light-color-2"
+                  className="input-message border border-palette-light-color-2"
                   placeholder="enter the message"
                   value={userData.message}
                   onChange={handleMessage}
