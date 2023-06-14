@@ -16,7 +16,7 @@
   }
   
   .col {
-    flex: 20%;
+    flex: 50%;
     margin: 10px;
     text-align: center;
     background-color: #ececec;
