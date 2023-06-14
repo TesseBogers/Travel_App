@@ -13,7 +13,11 @@ const StreetMap = () => {
   const position = [51.505, -0.09];
 
   const getIconUrl = () => {
+<<<<<<< HEAD
     return "src/components/icon/markerIcon.png";
+=======
+    return "src/components/icon/markerIcon.png"; 
+>>>>>>> origin/main
   };
 
   const ResetCenterView = ({ selectPosition }) => {
