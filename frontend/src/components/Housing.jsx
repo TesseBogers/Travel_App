@@ -56,7 +56,7 @@ useEffect(() => {
 
   return (
     <div className="flex">
-      <div className="w-1/4">
+      <div className="icons w-1/4">
         <img src={housingImage} alt="Housing" className="logo" />
       </div>
       <div className="w-1/2 mx-2">

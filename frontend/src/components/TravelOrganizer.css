@@ -1,5 +1,3 @@
-/* TravelOrganizer.css */
-
 .travel-organizer {
     display: flex;
     flex-wrap: wrap;
@@ -21,18 +19,20 @@
   }
   
   .logo {
-    width: 80px;
-    height: 80px;
-    margin-bottom: 10px;
-  }
-  
-  .data-input {
     width: 100%;
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin: 10px 5px 10px 8px;
+    height: 100%;
+    object-fit: contain;
   }
+
+  .input {
+    background-color: #ffff !important;
+  }
+
+  .icons {
+    width: 100px;
+    height: 100px;
+  }
+
   
   /* Add media queries for responsive design if needed */
   

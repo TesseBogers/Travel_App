@@ -57,12 +57,12 @@ const Food = () => {
 
   return (
     <div className="flex">
-      <div className="w-1/4">
+      <div className="icons w-1/4 self-center">
         <img src={FoodImage} alt="Food" className="logo" />
       </div>
       <div className="w-1/2 mx-2">
-        <form onSubmit={handleSubmit}>
-          <div>
+        <form onSubmit={handleSubmit} className='flex flex-col gap-3'>
+          <div className='flex flex-col'>
             <label><h2 className='font-inder text-palette-dark-color-3'>Food Name :</h2></label>
             <input
               type="text"
@@ -71,7 +71,7 @@ const Food = () => {
               onChange={handleInputChange}
             />
           </div>
-          <div>
+          <div className='flex flex-col'>
             <label><h2 className='font-inder text-palette-dark-color-3'>Food Price :</h2></label>
             <input
               type="number"
@@ -80,7 +80,7 @@ const Food = () => {
               onChange={handleInputChange}
             />
           </div>
-          <div>
+          <div className='flex flex-col'>
             <label><h2 className='font-inder text-palette-dark-color-3'>Food Address :</h2></label>
             <input
               type="text"

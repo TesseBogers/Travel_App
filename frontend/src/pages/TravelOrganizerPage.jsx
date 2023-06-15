@@ -18,8 +18,8 @@ const TravelOrganizer = () => {
 
   return (
     <div className="travel-organizer">
-      <div className="row">
-      <h2 className="text-xl font-black font-inder text-palette-dark-color-3">
+      <div className="col">
+      <h2 className="text-xl font-bold font-inder text-palette-dark-color-3">
             {days[currentDay].name}
           </h2>
         <div className="col grid gap-4 grid-cols-2 grid-rows-2 py-4">
@@ -29,7 +29,7 @@ const TravelOrganizer = () => {
           <Food />
         </div>
       </div>
-      <div className="flex justify-between mt-4">
+      <div className="flex flex-col justify-between mt-4">
         {currentDay > 0 && (
           <button
             className="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-6 rounded"
