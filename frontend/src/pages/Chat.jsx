@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { over } from "stompjs";
 import SockJS from "sockjs-client";
-import "../../dist/output.css";
+// import "../../dist/output.css";
 
 var stompClient = null;
 const ChatRoom = () => {
