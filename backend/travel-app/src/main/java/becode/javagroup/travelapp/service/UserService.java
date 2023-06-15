@@ -1,12 +1,17 @@
 package becode.javagroup.travelapp.service;
 
+import becode.javagroup.travelapp.dto.UserDto;
+import becode.javagroup.travelapp.dto.UserResponseDto;
+import becode.javagroup.travelapp.dto.UserProfileDto;
 import becode.javagroup.travelapp.exception.DuplicateUserException;
+import becode.javagroup.travelapp.exception.PermissionNotFoundException;
 import becode.javagroup.travelapp.exception.UserNotFoundException;
-import becode.javagroup.travelapp.model.Permission;
-import becode.javagroup.travelapp.model.Role;
-import becode.javagroup.travelapp.model.RoleName;
-import becode.javagroup.travelapp.model.User;
+import becode.javagroup.travelapp.exception.UserProfileNotFoundException;
+import becode.javagroup.travelapp.mapper.UserProfileMapper;
+import becode.javagroup.travelapp.model.*;
+import becode.javagroup.travelapp.repository.PermissionRepository;
 import becode.javagroup.travelapp.repository.RoleRepository;
+import becode.javagroup.travelapp.repository.UserProfileRepository;
 import becode.javagroup.travelapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +36,6 @@ import java.util.stream.Collectors;
  *
  */
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class UserService {
 
@@ -45,82 +49,174 @@ public class UserService {
      */
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final UserProfileMapper userProfileMapper;
+    private final PermissionRepository permissionRepository;
+    private final UserProfileRepository userProfileRepository;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     /**
      * Creates a user with the provided details.
      *
-     * @param username the username of the user.
-     * @param password the password of the user.
-     * @param email    the email of the user.
-     * @param roles    the roles of the user.
+     * @param userDto The user details.
      * @return The created user.
      */
-    public User createUser(String username, String password, String email, Set<RoleName> roles) {
-        validateUsernameAndEmail(null, username, email);
+    @Transactional
+    public UserResponseDto createUser(UserDto userDto) {
+        logger.info("Creating a new user with username: {}, email: {}, and roles: {}",
+                userDto.getUsername(),
+                userDto.getEmail(),
+                userDto.getRoles());
 
-        String hashedPassword = hashPassword(password);
-        User user = buildNewUser(username, email, hashedPassword);
-        Set<Role> roleSet = fetchRoles(roles);
-        user.setRoles(roleSet);
-        userRepository.save(user);
-        logger.info("User created with ID: {}", user.getId());
+        try {
+            validateUsernameAndEmail(userDto.getUsername(), userDto.getEmail());
 
-        return user;
+            String salt = BCrypt.gensalt();
+            String hashedPassword = hashPassword(userDto.getPassword(), salt);
+            User user = buildNewUser(userDto, hashedPassword, salt);
+
+            logger.info("Fetching and saving roles...");
+            Set<Role> roleSet = fetchRoles(userDto.getRoles());
+            roleSet = saveRoles(roleSet);
+            assignRolesToUser(user, roleSet);
+            logger.info("Roles fetched and saved.");
+
+            mapUserProfile(user, userDto.getUserProfile());
+
+            User savedUser = userRepository.save(user);
+            logger.info("User created with ID: {}", savedUser.getId());
+
+            return new UserResponseDto(savedUser);
+        } catch (Exception exception) {
+            logger.error("Error creating user: {}", exception.getMessage(), exception);
+            throw exception;
+        }
+    }
+
+    private Set<Role> saveRoles(Set<Role> roles) {
+        return new HashSet<>(roleRepository.saveAll(roles));
+    }
+
+    private void assignRolesToUser(User user, Set<Role> roles) {
+        user.setRoles(roles);
+    }
+
+
+    private void mapUserProfile(User user, UserProfileDto userProfileDto) {
+        UserProfile userProfile = userProfileMapper.dtoToUserProfile(userProfileDto);
+        userProfile.setUser(user);
+        user.setUserProfile(userProfile);
+        userProfileRepository.save(userProfile);
     }
 
     /**
      * Fetches roles from the database.
      *
-     * @param roles The set of RoleName.
+     * @param roleNames The set of RoleName.
      * @return The set of Role.
      */
-    private @NotNull Set<Role> fetchRoles(@NotNull Set<RoleName> roles) {
-        return roles.stream()
-                .map(roleRepository::findByRoleName)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toSet());
+    public Set<Role> fetchRoles(Set<String> roleNames) {
+        Set<Role> roles = new HashSet<>();
+
+        for (String roleName : roleNames) {
+            Optional<Role> optionalRole = roleRepository.findByRoleName(roleName);
+            if (optionalRole.isPresent()) {
+                Role role = optionalRole.get();
+                role.getPermissions().clear(); // clear existing permissions
+
+                switch (roleName) {
+                    case "ROLE_USER" -> assignUserPermissions(role);
+                    case "ROLE_ADMIN" -> assignAdminPermissions(role);
+                    case "ROLE_MODERATOR" -> assignModeratorPermissions(role);
+                    case "ROLE_TRAVELER" -> assignTravelerPermissions(role);
+                    default -> throw new IllegalArgumentException("Invalid role: " + roleName);
+                }
+
+                roles.add(role);
+            } else {
+                Role newRole = new Role();
+                newRole.setRoleName(roleName);
+                roles.add(newRole);
+            }
+        }
+        return roles;
+    }
+
+    private void assignUserPermissions(Role role) {
+        role.getPermissions().add(getPermissionByName(PermissionName.PERMISSION_READ.getValue()));
+        role.getPermissions().add(getPermissionByName(PermissionName.PERMISSION_UPDATE.getValue()));
+    }
+
+    private void assignAdminPermissions(Role role) {
+        role.getPermissions().add(getPermissionByName(PermissionName.PERMISSION_ALL.getValue()));
+    }
+
+    private void assignModeratorPermissions(Role role) {
+        role.getPermissions().add(getPermissionByName(PermissionName.PERMISSION_READ.getValue()));
+        role.getPermissions().add(getPermissionByName(PermissionName.PERMISSION_UPDATE.getValue()));
+        role.getPermissions().add(getPermissionByName(PermissionName.PERMISSION_DELETE.getValue()));
+    }
+
+    private void assignTravelerPermissions(Role role) {
+        role.getPermissions().add(getPermissionByName(PermissionName.PERMISSION_CREATE.getValue()));
+        role.getPermissions().add(getPermissionByName(PermissionName.PERMISSION_READ.getValue()));
+        role.getPermissions().add(getPermissionByName(PermissionName.PERMISSION_UPDATE.getValue()));
+    }
+
+    private Permission getPermissionByName(String permissionName) {
+        return permissionRepository.findByPermissionName(permissionName)
+                .orElseThrow(() -> new PermissionNotFoundException("Permission not found: " + permissionName));
     }
 
     /**
      * Checks if the given password matches the user's password.
      *
      * @param user     The user.
-     * @param password The password to check.
+     * @param passwordToCheck The password to check.
      * @return True if the passwords match, false otherwise.
      * BCrypt is used to hash the password.
      * @see <a href="https://www.baeldung.com/java-password-hashing">Hashing Passwords</a>
      * @see <a href="https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/crypto/bcrypt/BCrypt.html">BCrypt</a>
      */
-    public boolean checkPassword(@NotNull User user, String password) {
-        return BCrypt.checkpw(password, user.getPasswordHash());
+    public boolean checkPassword(User user, String passwordToCheck) {
+        return BCrypt.checkpw(passwordToCheck, user.getPasswordHash());
     }
+
 
     /**
      * Updates the user with the given details.
      *
-     * @param id       the id of the user.
-     * @param username the new username of the user.
-     * @param password the new password of the user.
-     * @param email    the new email of the user.
-     * @param roles    the new roles of the user.
+     * @param userDto The user details.
      * @return The updated user.
      */
-    public User updateUser(Long id, String username, String password, String email, Set<RoleName> roles) {
-        validateUsernameAndEmail(id, username, email);
+    @Transactional
+    public User updateUser(Long id, UserDto userDto) {
+        User existingUser = findUserById(id);
+        validateUsernameAndEmail(id, userDto.getUsername(), userDto.getEmail());
 
-        User user = findUserById(id);
-        user.setUsername(username);
-        user.setEmail(email);
-        String newHashedPassword = hashPassword(password);
-        user.setPasswordHash(newHashedPassword);
-        Set<Role> roleSet = convertToRoleSet(roles);
-        user.setRoles(roleSet);
-        userRepository.save(user);
-        logger.info("User updated with ID: {}", user.getId());
+        existingUser.setUsername(userDto.getUsername());
+        existingUser.setEmail(userDto.getEmail());
 
-        return user;
+        if(userDto.getPassword() != null && !userDto.getPassword().isEmpty()){
+            String salt = BCrypt.gensalt(); // Create a new unique salt
+            existingUser.setSalt(salt); // Store the salt with the user
+            existingUser.setPasswordHash(hashPassword(userDto.getPassword(), salt));
+        }
+
+        Set<Role> roleSet = fetchRoles(userDto.getRoles());
+        existingUser.setRoles(roleSet);
+
+        mapUserProfile(existingUser, userDto.getUserProfile());
+
+        userRepository.save(existingUser);
+
+        logger.info("User updated with ID: {}", existingUser.getId());
+
+        return existingUser;
+    }
+
+
+    private String hashPassword(String password, String salt) {
+        return BCrypt.hashpw(password, salt); // Use the salt when hashing
     }
 
     /**
@@ -142,33 +238,16 @@ public class UserService {
      * @throws UserNotFoundException  {@inheritDoc}
      */
     public User findUserById(Long id) {
-        return userRepository.findById(id)
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("No user found with id = " + id));
+
+        UserProfile userProfile = user.getUserProfile();
+        if (userProfile == null) {
+            throw new UserProfileNotFoundException("No UserProfile found for user with id = " + id);
+        }
+        return user;
     }
 
-    /**
-     * Finds a user by its username.
-     *
-     * @param username The username of the user.
-     * @return An User instance or throws an exception if not found.
-     * @throws UserNotFoundException if the user doesn't exist.
-     */
-    public User findUserByUsername(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("No user found with username = " + username));
-    }
-
-    /**
-     * Finds a user by its email.
-     *
-     * @param email The email of the user.
-     * @return An User instance or throws an exception if not found.
-     * @throws UserNotFoundException if the user doesn't exist.
-     */
-    public User findUserByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("No user found with email = " + email));
-    }
 
     /**
      * Finds all users with any of the given roles.
@@ -179,7 +258,7 @@ public class UserService {
      * @see Role
      *
      */
-    public List<User> findAllUsersByRoles(@NotNull Set<RoleName> roles) {
+    public List<User> findAllUsersByRoles(@NotNull Set<String> roles) {
         // Convert Set<RoleName> to Set<Role>
         Set<Role> roleSet = roles.stream()
                 .map(roleRepository::findByRoleName)
@@ -199,7 +278,7 @@ public class UserService {
      * @throws UserNotFoundException {@inheritDoc}
      */
     public User findByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("No user found with email = " + email));
+        return userRepository.findByEmail(email).orElseThrow(() -> new DuplicateUserException("Email is already in use: " + email));
     }
 
     /**
@@ -210,7 +289,7 @@ public class UserService {
      * @throws UserNotFoundException {@inheritDoc}
      */
     public User findByUsername(String username) {
-        return userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException("No user found with username = " + username));
+        return userRepository.findByUsername(username).orElseThrow(() -> new DuplicateUserException("Username is already in use: " + username));
     }
 
     /**
@@ -221,6 +300,7 @@ public class UserService {
     public List<User> findAllUsers() {
         return userRepository.findAll();
     }
+
 
     // Private methods...
     /**
@@ -236,77 +316,56 @@ public class UserService {
      */
     private void validateUsernameAndEmail(Long id, String username, String email) {
         userRepository.findByUsername(username).ifPresent(user -> {
-            if (id == null || !id.equals(user.getId())) {
+            if (!id.equals(user.getId())) {
                 throw new DuplicateUserException("Username is already in use: " + username);
             }
         });
 
         userRepository.findByEmail(email).ifPresent(user -> {
-            if (id == null || !id.equals(user.getId())) {
+            if (!id.equals(user.getId())) {
                 throw new DuplicateUserException("Email is already in use: " + email);
             }
         });
     }
 
-    /**
-     * Hashes the given password.
-     *
-     * @param plainPassword The password to hash.
-     * @return The hashed password.
-     * @see <a href="https://www.baeldung.com/java-password-hashing">Hashing Passwords</a>
-     * @see <a href="https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/crypto/bcrypt/BCrypt.html">BCrypt</a>
-     *
-     */
-    private @NotNull String hashPassword(String plainPassword) {
-        return BCrypt.hashpw(plainPassword, BCrypt.gensalt());
+    private void validateUsernameAndEmail(String username, String email) {
+        userRepository.findByUsername(username).ifPresent(user -> {
+            throw new DuplicateUserException("Username is already in use: " + username);
+        });
+
+        userRepository.findByEmail(email).ifPresent(user -> {
+            throw new DuplicateUserException("Email is already in use: " + email);
+        });
     }
 
-    /**
-     * Converts a set of RoleName to a set of Role.
-     *
-     * @param roles The set of RoleName.
-     * @return The set of Role.
-     */
-    private @NotNull Set<Role> convertToRoleSet(@NotNull Set<RoleName> roles) {
-        logger.info("Converting roles to Role set...");
-        Set<Role> roleSet = new HashSet<>();
-        for (RoleName roleName : roles) {
-            logger.info("Converting role: {}", roleName);
-            Role role = new Role();
-            logger.info("Setting role name: {}", roleName);
-            role.setName(String.valueOf(roleName));
-            logger.info("Adding role to set: {}", role);
-            roleSet.add(role);
-        }
 
-        return roleSet;
-    }
 
     /**
      * Builds a new User object.
      *
-     * @param username       The username of the user.
-     * @param email          The email of the user.
+     * @param userDto       The UserDto object.
      * @param hashedPassword The hashed password of the user.
+     * @param salt The salt used to hash the password.
      * @return A new User object.
      */
-    private @NotNull User buildNewUser(String username, String email, String hashedPassword) {
+    private @NotNull User buildNewUser(UserDto userDto, String hashedPassword, String salt) {
         logger.info("Building new user...");
         User user = new User();
-        logger.info("Setting username: {}", username);
-        user.setUsername(username);
-        logger.info("Setting email: {}", email);
-        user.setEmail(email);
+        logger.info("Setting username: {}", userDto.getUsername());
+        user.setUsername(userDto.getUsername());
+        logger.info("Setting email: {}", userDto.getEmail());
+        user.setEmail(userDto.getEmail());
         user.setPasswordHash(hashedPassword);
+        user.setSalt(salt);
 
         return user;
     }
 
     /**
-     * Find users who are traveling.
-     *
-     * @return List of users with the role ROLE_TRAVELER.
-     */
+ * Find users who are traveling.
+ *
+ * @return List of users with the role ROLE_TRAVELER.
+ */
     public List<User> findUsersTraveling() {
         logger.info("Finding users traveling...");
         return userRepository.findUsersTraveling(RoleName.ROLE_TRAVELER);

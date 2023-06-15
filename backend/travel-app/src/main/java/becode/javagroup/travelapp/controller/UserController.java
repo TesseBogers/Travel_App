@@ -1,13 +1,11 @@
 package becode.javagroup.travelapp.controller;
 
 import becode.javagroup.travelapp.dto.UserDto;
+import becode.javagroup.travelapp.dto.UserResponseDto;
 import becode.javagroup.travelapp.exception.DuplicateUserException;
 import becode.javagroup.travelapp.exception.RoleNotFoundException;
 import becode.javagroup.travelapp.exception.UserNotFoundException;
-import becode.javagroup.travelapp.model.Permission;
-import becode.javagroup.travelapp.model.Role;
-import becode.javagroup.travelapp.model.RoleName;
-import becode.javagroup.travelapp.model.User;
+import becode.javagroup.travelapp.model.*;
 import becode.javagroup.travelapp.service.RoleService;
 import becode.javagroup.travelapp.service.UserService;
 import jakarta.validation.Valid;
@@ -73,15 +71,10 @@ public class UserController {
      * If the username or email is already in use, a 409 Conflict status is returned.
      */
     @PostMapping
-    public ResponseEntity<User> createUser(@Valid @RequestBody @NotNull UserDto userDto) {
+    public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody @NotNull UserDto userDto) {
         try {
-            User user = userService.createUser(
-                    userDto.getUsername(),
-                    userDto.getPasswordHash(),
-                    userDto.getEmail(),
-                    userDto.getRoles()
-            );
-            return ResponseEntity.ok(user);
+            UserResponseDto userResponseDto = userService.createUser(userDto);
+            return ResponseEntity.ok(userResponseDto);
         } catch (DuplicateUserException exception) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         } catch (RoleNotFoundException exception) {
@@ -100,19 +93,12 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @Valid @RequestBody @NotNull UserDto userDetails) {
         try {
-            User user = userService.updateUser(
-                    id,
-                    userDetails.getUsername(),
-                    userDetails.getPasswordHash(),
-                    userDetails.getEmail(),
-                    userDetails.getRoles()
-            );
+            User user = userService.updateUser(id, userDetails);
             return ResponseEntity.ok(user);
         } catch (UserNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
-
 
     /**
      * Delete a user.
@@ -139,13 +125,19 @@ public class UserController {
      * If there is no role with one of the given names, a 404 Not Found status is returned.
      */
     @PostMapping("/{id}/roles")
-    public ResponseEntity<User> assignRolesToUser(@PathVariable Long id, @RequestBody @NotNull Set<RoleName> roleNames) {
-        try {
-            roleNames.forEach(roleName -> roleService.assignRoleToUser(id, roleName));
-            return ResponseEntity.of(Optional.ofNullable(userService.findUserById(id)));
-        } catch (UserNotFoundException | RoleNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<User> assignRolesToUser(@PathVariable Long id, @RequestBody @NotNull Set<String> roleNames) {
+            try {
+                roleNames.forEach(roleName -> {
+                    try {
+                        roleService.assignRoleToUser(id, String.valueOf(RoleName.valueOf(roleName)));
+                    } catch (IllegalArgumentException e) {
+                        throw new RoleNotFoundException(roleName);
+                    }
+                });
+                return ResponseEntity.of(Optional.ofNullable(userService.findUserById(id)));
+            } catch (UserNotFoundException | RoleNotFoundException e) {
+                return ResponseEntity.notFound().build();
+            }
     }
 
     /**
@@ -157,9 +149,15 @@ public class UserController {
      * If there is no role with one of the given names, a 404 Not Found status is returned.
      */
     @DeleteMapping("/{id}/roles")
-    public ResponseEntity<User> removeRolesFromUser(@PathVariable Long id, @RequestBody @NotNull Set<RoleName> roleNames) {
+    public ResponseEntity<User> removeRolesFromUser(@PathVariable Long id, @RequestBody @NotNull Set<String> roleNames) {
         try {
-            roleNames.forEach(roleName -> roleService.removeRoleFromUser(id, roleName));
+            roleNames.forEach(roleName -> {
+                try {
+                    roleService.removeRoleFromUser(id, String.valueOf(RoleName.valueOf(roleName)));
+                } catch (IllegalArgumentException e) {
+                    throw new RoleNotFoundException(roleName);
+                }
+            });
             return ResponseEntity.of(Optional.ofNullable(userService.findUserById(id)));
         } catch (UserNotFoundException | RoleNotFoundException e) {
             return ResponseEntity.notFound().build();
@@ -206,11 +204,15 @@ public class UserController {
      * @return All users who have the given role.
      */
     @GetMapping("/roles/{roleName}")
-    public ResponseEntity<List<User>> getUsersWithRole(@PathVariable RoleName roleName) {
-        List<User> users = userService.findUsersWithRole(roleName);
-        return users.isEmpty()
-                ? ResponseEntity.noContent().build()
-                : ResponseEntity.ok(users);
+    public ResponseEntity<List<User>> getUsersWithRole(@PathVariable String roleName) {
+        try {
+            List<User> users = userService.findUsersWithRole(RoleName.valueOf(roleName));
+            return users.isEmpty()
+                    ? ResponseEntity.noContent().build()
+                    : ResponseEntity.ok(users);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build(); // Handle exception for invalid RoleName
+        }
     }
 
     /**

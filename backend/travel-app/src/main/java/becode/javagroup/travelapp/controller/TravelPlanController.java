@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * REST controller for managing travel plans.
@@ -38,8 +39,9 @@ public class TravelPlanController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<TravelPlanDto> getTravelPlan(@PathVariable Long id) {
-        return ResponseEntity.ok(travelPlanService.getTravelPlan(id));
+        return travelPlanService.getTravelPlan(id);
     }
+
 
     /**
      * Creates a new travel plan.

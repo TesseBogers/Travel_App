@@ -46,15 +46,15 @@ public class PermissionService {
     /**
      * Finds a permission by its name.
      *
-     * @param name the name of the permission.
+     * @param permissionName the name of the permission.
      * @return the Permission object.
      * @throws PermissionNotFoundException {@inheritDoc}
      */
-    public Permission findByName(@NotNull PermissionName name) {
-        logger.info("Attempting to find permission with name: {}", name.name());
+    public Permission findByName(@NotNull String permissionName) {
+        logger.info("Attempting to find permission with name: {}", permissionName);
 
-        return permissionRepository.findByName(name.name())
-                .orElseThrow(() -> new PermissionNotFoundException("Error:Permission not found: " + name));
+        return permissionRepository.findByPermissionName(permissionName)
+                .orElseThrow(() -> new PermissionNotFoundException("Error: Permission not found: " + permissionName));
     }
 
     /**
@@ -64,7 +64,7 @@ public class PermissionService {
      * @return the created Permission object.
      */
     public Optional<Permission> createPermission(@NotNull Permission permission) {
-        logger.info("Creating new permission: {}", permission.getName());
+        logger.info("Creating new permission: {}", permission.getPermissionName());
 
         return Optional.of(permissionRepository.save(permission));
     }
@@ -76,7 +76,7 @@ public class PermissionService {
      * @return the updated Permission object.
      */
     public Optional<Permission> updatePermission(@NotNull Permission permission) {
-        logger.info("Updating permission: {}", permission.getName());
+        logger.info("Updating permission: {}", permission.getPermissionName());
 
         return Optional.of(permissionRepository.save(permission));
     }
@@ -88,7 +88,7 @@ public class PermissionService {
      * @return void.
      */
     public Optional<Void> deletePermission(@NotNull Permission permission) {
-        logger.info("Deleting permission: {}", permission.getName());
+        logger.info("Deleting permission: {}", permission.getPermissionName());
 
         permissionRepository.delete(permission);
 

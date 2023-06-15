@@ -44,24 +44,26 @@ public class UserProfileController {
     /**
      * Creates a new user profile.
      *
+     * @param userId The ID of the user for the new profile.
      * @param userProfileDto The user profile data to create a new profile from.
      * @return A response entity containing the created user profile.
      */
-    @PostMapping
-    public ResponseEntity<UserProfileDto> createProfile(@RequestBody UserProfileDto userProfileDto) {
-        return ResponseEntity.ok(userProfileService.createProfile(userProfileDto));
+    @PostMapping("/{userId}")
+    public ResponseEntity<UserProfileDto> createProfile(@PathVariable Long userId, @RequestBody UserProfileDto userProfileDto) {
+        return ResponseEntity.ok(userProfileService.createProfile(userProfileDto, userId));
     }
 
     /**
      * Updates a specific user profile by its ID.
      *
      * @param id             The ID of the user profile to update.
+     * @param userId         The ID of the user for the profile.
      * @param userProfileDto The user profile data to update the profile with.
      * @return A response entity containing the updated user profile.
      */
-    @PutMapping("/{id}")
-    public ResponseEntity<UserProfileDto> updateProfile(@PathVariable Long id, @RequestBody UserProfileDto userProfileDto) {
-        return ResponseEntity.ok(userProfileService.updateProfile(id, userProfileDto));
+    @PutMapping("/{id}/{userId}")
+    public ResponseEntity<UserProfileDto> updateProfile(@PathVariable Long id, @PathVariable Long userId, @RequestBody UserProfileDto userProfileDto) {
+        return ResponseEntity.ok(userProfileService.updateProfile(id, userProfileDto, userId));
     }
 
     /**

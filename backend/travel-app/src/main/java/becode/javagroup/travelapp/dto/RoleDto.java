@@ -21,14 +21,9 @@ public class RoleDto {
     private Long id;
 
     /**
-     * The name is a String that represents the name of the role.
-     */
-    private String name;
-
-    /**
      * The roleName is an enumeration representing the descriptive name of the role.
      */
-    private RoleName roleName;
+    private String roleName;
 
     /**
      * The userIds is a Set of Long values representing the IDs of the users associated with this role.

@@ -91,7 +91,7 @@ const Navbar = () => {
                                 <Link to="/timeline">Timeline</Link>
                             </li>
                             <li className="menu-item mx-4">
-                                <Link to="trip-organizer">Trip Organizer</Link>
+                                <Link to="trip-organizer">Travel Organizer</Link>
                             </li>
                             <li className="menu-item mx-4">
                                 <Link to="/chat">Chat</Link>

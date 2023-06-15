@@ -2,10 +2,7 @@ package becode.javagroup.travelapp.mapper;
 
 import becode.javagroup.travelapp.dto.RoleDto;
 import becode.javagroup.travelapp.dto.PermissionDto;
-import becode.javagroup.travelapp.model.Role;
-import becode.javagroup.travelapp.model.Permission;
-import becode.javagroup.travelapp.model.RoleName;
-import becode.javagroup.travelapp.model.User;
+import becode.javagroup.travelapp.model.*;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
@@ -27,8 +24,7 @@ public class DtoMapper {
         RoleDto roleDto = new RoleDto();
 
         roleDto.setId(role.getId());
-        roleDto.setName(role.getName());
-        roleDto.setRoleName(RoleName.valueOf(role.getName()));
+        roleDto.setRoleName(String.valueOf(RoleName.valueOf(role.getRoleName())));
 
         Set<Long> userIds = role.getUsers().stream()
                 .map(User::getId)
@@ -43,6 +39,8 @@ public class DtoMapper {
         return roleDto;
     }
 
+
+
     /**
      * Maps Permission entity to Permission DTO.
      *
@@ -52,9 +50,7 @@ public class DtoMapper {
     public PermissionDto toPermissionDto(Permission permission) {
         PermissionDto permissionDto = new PermissionDto();
 
-        permissionDto.setId(permission.getId());
-        permissionDto.setName(permission.getName());
-        permissionDto.setPermissionName(permission.getPermissionName());
+        permissionDto.setPermissionName(String.valueOf(PermissionName.valueOf(permission.getPermissionName())));
 
         Set<Long> rolesIds = permission.getRoles().stream().map(Role::getId).collect(Collectors.toSet());
         permissionDto.setRoleIds(rolesIds);

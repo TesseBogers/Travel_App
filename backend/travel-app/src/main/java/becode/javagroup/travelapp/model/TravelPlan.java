@@ -2,6 +2,8 @@ package becode.javagroup.travelapp.model;
 
 import lombok.*;
 import jakarta.persistence.*;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDate;
 
 /**
@@ -23,7 +25,6 @@ public class TravelPlan {
      * @see Setter
      * @see AccessLevel
      */
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(AccessLevel.NONE)
@@ -38,12 +39,14 @@ public class TravelPlan {
     /**
      * The field startDate is a LocalDate that represents the start date of the travel plan. It is a required field, hence cannot be null.
      */
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 
     /**
      * The field endDate is a LocalDate that represents the end date of the travel plan. It is a required field, hence cannot be null.
      */
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
 
@@ -56,4 +59,8 @@ public class TravelPlan {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

@@ -6,11 +6,15 @@ import becode.javagroup.travelapp.model.User;
 import becode.javagroup.travelapp.repository.TravelPlanRepository;
 import becode.javagroup.travelapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.BeanUtils;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -21,7 +25,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class TravelPlanService {
+public class TravelPlanService implements ITravelPlanService {
 
     private final TravelPlanRepository travelPlanRepository;
     private final UserRepository userRepository;
@@ -44,11 +48,12 @@ public class TravelPlanService {
      * @return the `TravelPlanDto` object representing the travel plan.
      * @throws IllegalArgumentException when the travel plan is not found.
      */
-    public TravelPlanDto getTravelPlan(Long id) {
-        TravelPlan travelPlan = travelPlanRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid travel plan Id:" + id));
-        return convertToDto(travelPlan);
+    public ResponseEntity<TravelPlanDto> getTravelPlan(Long id) {
+        return travelPlanRepository.findById(id)
+                .map(travelPlan -> ResponseEntity.ok().body(convertToDto(travelPlan)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
 
     /**
      * Creates a new travel plan.
@@ -100,7 +105,12 @@ public class TravelPlanService {
      */
     private TravelPlanDto convertToDto(TravelPlan travelPlan) {
         TravelPlanDto travelPlanDto = new TravelPlanDto();
-        BeanUtils.copyProperties(travelPlan, travelPlanDto);
+        travelPlanDto.setId(travelPlan.getId());
+        travelPlanDto.setDestination(travelPlan.getDestination());
+
+        travelPlanDto.setStartDate(travelPlan.getStartDate());
+        travelPlanDto.setEndDate(travelPlan.getEndDate());
+
         travelPlanDto.setUserId(travelPlan.getUser().getId());
         return travelPlanDto;
     }
@@ -114,7 +124,12 @@ public class TravelPlanService {
      */
     private TravelPlan convertToEntity(TravelPlanDto travelPlanDto) {
         TravelPlan travelPlan = new TravelPlan();
-        BeanUtils.copyProperties(travelPlanDto, travelPlan);
+        travelPlan.setId(travelPlanDto.getId());
+        travelPlan.setDestination(travelPlanDto.getDestination());
+
+        travelPlan.setStartDate(travelPlanDto.getStartDate());
+        travelPlan.setEndDate(travelPlanDto.getEndDate());
+
         User user = userRepository.findById(travelPlanDto.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + travelPlanDto.getUserId()));
         travelPlan.setUser(user);

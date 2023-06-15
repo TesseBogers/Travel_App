@@ -1,7 +1,7 @@
 package becode.javagroup.travelapp.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
@@ -29,21 +29,22 @@ public class TravelPlanDto {
 
     /**
      * The field startDate is a LocalDate that represents the start date of the travel plan. It is a required field and cannot be null.
+     * The date format is "dd-MM-yyyy". The LocalDateDeserializer is used for custom deserialization.
      * @see NotNull
-     * @see DateTimeFormat
+     * @see LocalDateDeserializer
      */
-    @DateTimeFormat(pattern = "dd-MM-yyyy")
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     @NotNull(message = "Start date cannot be null")
     private LocalDate startDate;
 
     /**
      * The field endDate is a LocalDate that represents the end date of the travel plan. It is a required field and cannot be null.
-     * Additionally, it must be a future date or the current date.
+     * Additionally, it must be a future date or the current date. The date format is "dd-MM-yyyy". The LocalDateDeserializer is used for custom deserialization.
      * @see NotNull
-     * @see DateTimeFormat
      * @see FutureOrPresent
+     * @see LocalDateDeserializer
      */
-    @DateTimeFormat(pattern = "dd-MM-yyyy")
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     @FutureOrPresent(message = "End date cannot be in the future")
     @NotNull(message = "End date cannot be null")
     private LocalDate endDate;

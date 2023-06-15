@@ -1,6 +1,7 @@
 package becode.javagroup.travelapp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -54,6 +55,9 @@ public class User {
     @JsonIgnore
     private String passwordHash;
 
+    @Column(name = "salt")
+    private String salt;
+
     /**
      * The email of this user.
      * @see NaturalId
@@ -61,7 +65,7 @@ public class User {
      * @see Email
      * @see Column
      */
-    @NaturalId
+
     @NotBlank
     @Email
     @Column(name = "email", unique = true)
@@ -73,10 +77,11 @@ public class User {
      * @see JoinTable
      * @see Role
      */
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @JsonManagedReference
     private Set<Role> roles = new HashSet<>();
 
     /**
@@ -86,7 +91,8 @@ public class User {
      * @see UserProfile
      */
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "profile_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_profile_id", referencedColumnName = "id")
+    @JsonManagedReference
     private UserProfile userProfile;
 
     /**
@@ -97,7 +103,7 @@ public class User {
     public boolean hasPermission(PermissionName permissionName) {
         for (Role role : roles) {
             for (Permission permission : role.getPermissions()) {
-                if (permission.getName().equals(permissionName.name())) {
+                if (permission.getPermissionName().equals(permissionName.getValue())) {
                     return true;
                 }
             }
@@ -105,17 +111,12 @@ public class User {
         return false;
     }
 
-    /**
-     * Checks if this user has a specific role.
-     * @param roleName the name of the role to check
-     * @return true if the user has the role, false otherwise
-     */
-    public boolean hasRole(RoleName roleName) {
-        for (Role role : roles) {
-            if (role.getName().equals(roleName.name())) {
-                return true;
+    public boolean hasRole(String roleName) {
+            for (Role role : roles) {
+                if (role.getRoleName().equals(roleName)) {
+                    return true;
+                }
             }
+            return false;
         }
-        return false;
     }
-}

@@ -16,19 +16,9 @@ import java.util.Set;
 @AllArgsConstructor
 public class PermissionDto {
     /**
-     * The id is a unique identifier for this permission.
-     */
-    private Long id;
-
-    /**
      * The permissionName is an enumeration representing the name of the permission.
      */
-    private PermissionName permissionName;
-
-    /**
-     * The name is a String that represents a descriptive name for the permission.
-     */
-    private String name;
+    private String permissionName;
 
     /**
      * The roleIds is a Set of Long values representing the IDs of the roles associated with this permission.

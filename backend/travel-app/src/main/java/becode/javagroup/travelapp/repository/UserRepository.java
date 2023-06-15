@@ -1,9 +1,6 @@
 package becode.javagroup.travelapp.repository;
 
-import becode.javagroup.travelapp.model.Permission;
-import becode.javagroup.travelapp.model.Role;
-import becode.javagroup.travelapp.model.RoleName;
-import becode.javagroup.travelapp.model.User;
+import becode.javagroup.travelapp.model.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,7 +23,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @param username The username to search for.
      * @return The User entity.
      */
-    Optional<User> findByUsername(String username);
+    @Query("SELECT u FROM User u JOIN FETCH u.roles r JOIN FETCH r.permissions WHERE u.username = (:username)")
+    Optional<User> findByUsername(@Param("username") String username);
 
     /**
      * Find User entity by email.
@@ -50,7 +48,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @param roleName The role to search for.
      * @return The list of User entities.
      */
-    @Query("SELECT u FROM User u JOIN u.roles r WHERE r.name = :roleName")
+    @Query("SELECT u FROM User u JOIN u.roles r WHERE r.roleName = :roleName")
     List<User> findByRole(@Param("roleName") RoleName roleName);
 
     /**
@@ -59,7 +57,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @param roleName The role to search for.
      * @return The list of User entities.
      */
-    @Query("SELECT u FROM User u JOIN u.roles r WHERE r.name = :roleName")
+    @Query("SELECT u FROM User u JOIN u.roles r WHERE r.roleName = :roleName")
     List<User> findUsersTraveling(@Param("roleName") RoleName roleName);
 
     /**
@@ -68,7 +66,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @param roleName The role to search for.
      * @return The list of User entities.
      */
-    @Query("SELECT u FROM User u JOIN u.roles r WHERE r.name = :roleName")
+    @Query("SELECT u FROM User u JOIN u.roles r WHERE r.roleName = :roleName")
     List<User> findUsersWithRole(@Param("roleName") RoleName roleName);
 
     /**
@@ -77,7 +75,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @param permissionName The permission to search for.
      * @return The list of User entities.
      */
-    @Query("SELECT u FROM User u JOIN u.roles r JOIN r.permissions p WHERE p.name = :permissionName")
+    @Query("SELECT u FROM User u JOIN u.roles r JOIN r.permissions p WHERE p.permissionName = :permissionName")
     List<User> findUsersWithPermission(@Param("permissionName") String permissionName);
 
     /**

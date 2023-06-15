@@ -34,7 +34,4 @@ public class UserProfileDto {
 
     /** The preferred currency of the user. */
     private String preferredCurrency;
-
-    /** The ID of the user to whom this profile belongs. */
-    private Long userId;
 }

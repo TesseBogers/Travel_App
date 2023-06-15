@@ -1,5 +1,6 @@
 package becode.javagroup.travelapp.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -96,5 +97,6 @@ public class UserProfile {
      * @see User
      */
     @OneToOne(mappedBy = "userProfile")
+    @JsonBackReference
     private User user;
 }

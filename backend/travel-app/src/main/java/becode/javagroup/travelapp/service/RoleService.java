@@ -51,15 +51,15 @@ public class RoleService {
     /**
      * Finds a role by its name.
      *
-     * @param name the name of the role.
+     * @param roleName the role_name of the role.
      * @return the Role object.
      * @throws RoleNotFoundException {@inheritDoc}
      */
-    public Role findByName(@NotNull RoleName name) {
-        logger.info("Attempting to find role with name: {}", name.name());
+    public Role findByName(@NotNull String roleName) {
+        logger.info("Attempting to find role with roleName: {}", roleName);
 
-        return roleRepository.findByName(name.name())
-                .orElseThrow(() -> new RoleNotFoundException("Error: Role not found: " + name));
+        return roleRepository.findByRoleName(roleName)
+                .orElseThrow(() -> new RoleNotFoundException("Error: Role not found: " + roleName));
     }
 
     /**
@@ -70,7 +70,7 @@ public class RoleService {
      * The @NotNull annotation is used to prevent the role from being null.
      */
     public Role createRole(@NotNull Role role) {
-        logger.info("Creating new role: {}", role.getName());
+        logger.info("Creating new role: {}", role.getRoleName());
 
         return roleRepository.save(role);
     }
@@ -82,7 +82,7 @@ public class RoleService {
      * @return the updated Role object.
      */
     public Role updateRole(@NotNull Role role) {
-        logger.info("Updating role: {}", role.getName());
+        logger.info("Updating role: {}", role.getRoleName());
 
         return roleRepository.save(role);
     }
@@ -93,7 +93,7 @@ public class RoleService {
      * @param role the role to be deleted.
      */
     public void deleteRole(@NotNull Role role) {
-        logger.info("Deleting role: {}", role.getName());
+        logger.info("Deleting role: {}", role.getRoleName());
 
         roleRepository.delete(role);
     }
@@ -106,11 +106,19 @@ public class RoleService {
      * @return the User object after the role has been assigned.
      * @throws RoleNotFoundException {@inheritDoc}
      */
-    public User assignRoleToUser(Long userId, RoleName roleName) {
+    public User assignRoleToUser(Long userId, String roleName) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException("No user found with id = " + userId)
         );
-        Role role = findByName(roleName);
+
+        RoleName roleEnum;
+        try {
+            roleEnum = RoleName.valueOf(roleName);
+        } catch (IllegalArgumentException e) {
+            throw new RoleNotFoundException("Error: Role not found: " + roleName);
+        }
+
+        Role role = findByName(roleEnum.getValue());
         user.getRoles().add(role);
         userRepository.save(user);
         logger.info("Role {} assigned to user with ID: {}", roleName, user.getId());
@@ -126,11 +134,19 @@ public class RoleService {
      * @return the User object after the role has been removed.
      * @throws RoleNotFoundException {@inheritDoc}
      */
-    public User removeRoleFromUser(Long userId, RoleName roleName) {
+    public User removeRoleFromUser(Long userId, String roleName) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException("No user found with id = " + userId)
         );
-        Role role = findByName(roleName);
+
+        RoleName roleEnum;
+        try {
+            roleEnum = RoleName.valueOf(roleName);
+        } catch (IllegalArgumentException e) {
+            throw new RoleNotFoundException("Error: Role not found: " + roleName);
+        }
+
+        Role role = findByName(roleEnum.getValue());
 
         if (user.getRoles().contains(role)) {
             user.getRoles().remove(role);
@@ -194,9 +210,13 @@ public class RoleService {
         Role role = roleRepository.findById(roleId)
                 .orElseThrow(() -> new ResourceNotFoundException("Role not found with id " + roleId));
 
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("No user found with id = " + userId));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + userId));
+
         user.getRoles().add(role);
         userRepository.save(user);
+
+        logger.info("Role with ID: {} has been added to user with ID: {}", roleId, userId);
     }
 
     /**
@@ -209,17 +229,18 @@ public class RoleService {
         UserDto userDto = new UserDto();
 
         userDto.setUsername(user.getUsername());
-        userDto.setPasswordHash(user.getPasswordHash());
+        userDto.setPassword(user.getPasswordHash());
         userDto.setEmail(user.getEmail());
 
-        Set<RoleName> roleNames = user.getRoles().stream()
-                .map(role -> RoleName.valueOf(role.getName()))
+        Set<String> roleNames = user.getRoles().stream()
+                .map(Role::getRoleName)
                 .collect(Collectors.toSet());
 
         userDto.setRoles(roleNames);
 
         return userDto;
     }
+
 
     /**
      * Fetches all users that have a certain role.

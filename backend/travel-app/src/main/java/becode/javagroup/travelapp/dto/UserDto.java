@@ -29,7 +29,7 @@ public class UserDto {
      * @see NotBlank
      */
     @NotBlank
-    private String passwordHash;
+    private String password;
 
     /**
      * The email of the user. The @NotBlank and @Email annotations are used to validate that the email is not blank and is a valid email address.
@@ -44,5 +44,6 @@ public class UserDto {
      * The roles of the user. It is a set of RoleName objects which represent the roles of the user.
      * @see RoleName
      */
-    private Set<RoleName> roles;
+    private Set<String> roles;
+    private UserProfileDto userProfile;
 }

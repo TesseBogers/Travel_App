@@ -2,6 +2,7 @@ package becode.javagroup.travelapp.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.Set;
@@ -43,27 +44,29 @@ public class Permission {
     private Long id;
 
     /**
-     * The name of this permission as a PermissionName enum.
-     * @see Enumerated
+     * The name of this permission as a PermissionName string.
      * @see Column
      * @see PermissionName
      */
-    @Enumerated(EnumType.STRING)
     @Column(name = "permission_name")
-    private PermissionName permissionName;
-
-    /**
-     * The name of this permission.
-     * @see NotBlank
-     */
-    @NotBlank
-    private String name;
+    @NotNull
+    private String permissionName;
 
     /**
      * The roles associated with this permission.
      * @see ManyToMany
      * @see Role
      */
-    @ManyToMany(mappedBy = "permissions")
+    @ManyToMany(mappedBy = "permissions", fetch = FetchType.LAZY)
     private Set<Role> roles;
+
+    public void addRole(Role role) {
+        this.roles.add(role);
+        role.getPermissions().add(this);
+    }
+
+    public void removeRole(Role role) {
+        this.roles.remove(role);
+        role.getPermissions().remove(this);
+    }
 }

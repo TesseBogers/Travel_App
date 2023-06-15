@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static becode.javagroup.travelapp.dto.UserResponseDto.getUserProfileDto;
+
 /**
  * Service class for handling operations related to UserProfile.
  * It uses the UserProfileRepository to interact with the underlying data store.
@@ -51,10 +53,11 @@ public class UserProfileService {
      * Create a new userProfile.
      *
      * @param userProfileDto The UserProfileDto.
+     * @param userId The Id of the User.
      * @return The created UserProfileDto.
      */
-    public UserProfileDto createProfile(UserProfileDto userProfileDto) {
-        UserProfile userProfile = convertToEntity(userProfileDto);
+    public UserProfileDto createProfile(UserProfileDto userProfileDto, Long userId) {
+        UserProfile userProfile = convertToEntity(userProfileDto, userId);
         userProfile = userProfileRepository.save(userProfile);
         return convertToDto(userProfile);
     }
@@ -64,11 +67,12 @@ public class UserProfileService {
      *
      * @param id The id of the userProfile.
      * @param userProfileDto The UserProfileDto with updated data.
+     * @param userId The Id of the User.
      * @return The updated UserProfileDto.
      */
-    public UserProfileDto updateProfile(Long id, UserProfileDto userProfileDto) {
+    public UserProfileDto updateProfile(Long id, UserProfileDto userProfileDto, Long userId) {
         UserProfile userProfile = findProfileOrThrow(id);
-        updateProfileData(userProfile, userProfileDto);
+        updateProfileData(userProfile, userProfileDto, userId);
         userProfile = userProfileRepository.save(userProfile);
         return convertToDto(userProfile);
     }
@@ -90,16 +94,7 @@ public class UserProfileService {
      * @return The corresponding UserProfileDto.
      */
     private UserProfileDto convertToDto(UserProfile userProfile) {
-        UserProfileDto userProfileDto = new UserProfileDto();
-        userProfileDto.setId(userProfile.getId());
-        userProfileDto.setFirstName(userProfile.getFirstName());
-        userProfileDto.setLastName(userProfile.getLastName());
-        userProfileDto.setDateOfBirth(userProfile.getDateOfBirth());
-        userProfileDto.setCountry(userProfile.getCountry());
-        userProfileDto.setPreferredLanguage(userProfile.getPreferredLanguage());
-        userProfileDto.setPreferredCurrency(userProfile.getPreferredCurrency());
-        userProfileDto.setUserId(userProfile.getUser().getId());
-        return userProfileDto;
+        return getUserProfileDto(userProfile);
     }
 
     /**
@@ -108,9 +103,9 @@ public class UserProfileService {
      * @param userProfileDto The UserProfileDto.
      * @return The corresponding UserProfile.
      */
-    private UserProfile convertToEntity(UserProfileDto userProfileDto) {
+    private UserProfile convertToEntity(UserProfileDto userProfileDto, Long userId) {
         UserProfile userProfile = new UserProfile();
-        updateProfileData(userProfile, userProfileDto);
+        updateProfileData(userProfile, userProfileDto, userId);
         return userProfile;
     }
 
@@ -119,14 +114,14 @@ public class UserProfileService {
      *
      * @param userProfileDto The UserProfileDto with the new data.
      */
-    private void updateProfileData(UserProfile userProfile, UserProfileDto userProfileDto) {
+    private void updateProfileData(UserProfile userProfile, UserProfileDto userProfileDto, Long userId) {
         userProfile.setFirstName(userProfileDto.getFirstName());
         userProfile.setLastName(userProfileDto.getLastName());
         userProfile.setDateOfBirth(userProfileDto.getDateOfBirth());
         userProfile.setCountry(userProfileDto.getCountry());
         userProfile.setPreferredLanguage(userProfileDto.getPreferredLanguage());
         userProfile.setPreferredCurrency(userProfileDto.getPreferredCurrency());
-        userProfile.setUser(findUserOrThrow(userProfileDto.getUserId()));
+        userProfile.setUser(findUserOrThrow(userId));
     }
 
     /**
