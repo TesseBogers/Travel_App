@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import housingImage from "../assets/images/hotel.png"
 
 const Housing = () => {
@@ -37,6 +37,7 @@ const handleSubmit = async (e) => {
         housingPrice: 0,
         housingAddress: '',
       });
+      localStorage.setItem('savedHousing', JSON.stringify(savedHousing));
     } else {
       throw new Error('Failed to save housing');
     }
@@ -44,6 +45,13 @@ const handleSubmit = async (e) => {
     console.error(error);
   }
 };
+
+useEffect(() => {
+  const savedHousingData = JSON.parse(localStorage.getItem('savedHousing'));
+  if (savedHousingData) {
+    setSavedHousing(savedHousingData);
+  }
+}, []);
 
 
   return (
@@ -80,7 +88,7 @@ const handleSubmit = async (e) => {
           onChange={handleInputChange}
           />
         </div>
-        <button type="submit">Save</button>
+        <button className='font-inder bg-purple-300' type="submit">Save</button>
       </form>
       </div>
 
@@ -90,6 +98,8 @@ const handleSubmit = async (e) => {
           <p>Housing Name : {savedHousing.housingName}</p>
           <p>Housing Price : {savedHousing.housingPrice}</p>
           <p>Housing Address : {savedHousing.housingAddress}</p>
+          <button className='font-inder bg-purple-300' type="submit">Edit</button>
+          <button className='font-inder bg-purple-300' type="submit">Delete</button>
         </div>
       )}
     </div>

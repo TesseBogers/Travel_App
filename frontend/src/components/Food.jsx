@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { React, useState, useEffect } from 'react';
 import FoodImage from "../assets/images/coutellerie.png"
 
 const Food = () => {
@@ -19,7 +19,7 @@ const Food = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
       const response = await fetch(API_BASE_URL, {
         method: 'POST',
@@ -28,7 +28,7 @@ const Food = () => {
         },
         body: JSON.stringify(food),
       });
-  
+
       if (response.ok) {
         const savedFood = await response.json();
         setSavedFood(savedFood);
@@ -37,6 +37,8 @@ const Food = () => {
           foodPrice: 0,
           foodAddress: '',
         });
+        // Save the data in local storage
+        localStorage.setItem('savedFood', JSON.stringify(savedFood));
       } else {
         throw new Error('Failed to save food');
       }
@@ -44,6 +46,14 @@ const Food = () => {
       console.error(error);
     }
   };
+
+  useEffect(() => {
+    // Retrieve the data from local storage on component mount
+    const savedFoodData = localStorage.getItem('savedFood');
+    if (savedFoodData) {
+      setSavedFood(JSON.parse(savedFoodData));
+    }
+  }, []);
 
   return (
     <div className="flex">
@@ -79,7 +89,7 @@ const Food = () => {
               onChange={handleInputChange}
             />
           </div>
-          <button type="submit">Save</button>
+          <button className='font-inder bg-purple-300' type="submit">Save</button>
         </form>
       </div>
       <div className="w-1/4">
@@ -88,6 +98,8 @@ const Food = () => {
             <p>Food Name: {savedFood.foodName}</p>
             <p>Food Price: {savedFood.foodPrice}</p>
             <p>Food Address: {savedFood.foodAddress}</p>
+            <button className='font-inder bg-purple-300' type="submit">Edit</button>
+            <button className='font-inder bg-purple-300' type="submit">Delete</button>
           </div>
         )}
       </div>
@@ -96,5 +108,6 @@ const Food = () => {
 };
 
 export default Food;
+
 
 

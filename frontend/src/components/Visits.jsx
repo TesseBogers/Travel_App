@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import visitsImage from "../assets/images/holstentor.png"
 
 const Visits = () => {
@@ -37,6 +37,7 @@ const handleSubmit = async (e) => {
         visitPrice: 0,
         visitAddress: '',
       });
+      localStorage.setItem('savedVisits', JSON.stringify(savedVisits));
     } else {
       throw new Error('Failed to save visits');
     }
@@ -44,6 +45,13 @@ const handleSubmit = async (e) => {
     console.error(error);
   }
 };
+
+useEffect(() => {
+  const savedVisitsData = JSON.parse(localStorage.getItem('savedVisits'));
+  if (savedVisitsData) {
+    setSavedVisits(savedVisitsData);
+  }
+}, []);
 
   return (
     <div className='flex'>
@@ -79,7 +87,7 @@ const handleSubmit = async (e) => {
           onChange={handleInputChange}
           />
         </div>
-        <button type="submit">Save</button>
+        <button className='font-inder bg-purple-300' type="submit">Save</button>
       </form>
       </div>
 
@@ -89,6 +97,8 @@ const handleSubmit = async (e) => {
           <p>Housing Name : {savedVisits.visitName}</p>
           <p>Housing Price : {savedVisits.visitPrice}</p>
           <p>Housing Address : {savedVisits.visitAddress}</p>
+          <button className='font-inder bg-purple-300' type="submit">Edit</button>
+          <button className='font-inder bg-purple-300' type="submit">Delete</button>
         </div>
       )}
       </div>

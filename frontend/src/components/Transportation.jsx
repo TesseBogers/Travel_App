@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TranspImage from "../assets/images/avion-aerien.png"
 
 const Transportation = () => {
@@ -39,6 +39,7 @@ const handleSubmit = async (e) => {
         transportationDeparture: '',
         transportationArrival: '',
       });
+      localStorage.setItem('savedTransportation', JSON.stringify(savedTransportation));
     } else {
       throw new Error('Failed to save transportation');
     }
@@ -46,6 +47,13 @@ const handleSubmit = async (e) => {
     console.error(error);
   }
 };
+
+useEffect(() => {
+  const savedTransportationData = JSON.parse(localStorage.getItem('savedTransportation'));
+  if (savedTransportationData) {
+    setSavedTransportation(savedTransportationData);
+  }
+}, []);
 
   return (
     <div className="flex">
@@ -55,7 +63,7 @@ const handleSubmit = async (e) => {
       <div className="w-1/2 mx-2">
       <form onSubmit={handleSubmit}>
         <div>
-          <label>Transportation Type :</label>
+          <label><h2 className='font-inder text-palette-dark-color-3'>Transportation Type :</h2></label>
           <input
           type="text"
           name="transportationType"
@@ -90,18 +98,21 @@ const handleSubmit = async (e) => {
           onChange={handleInputChange}
           />
         </div>
-        <button type="submit">Save</button>
+        <button className='font-inder bg-purple-300' type="submit">Save</button>
       </form>
       </div>
 
       <div className='w-1/4'>
       {savedTransportation && (
         <div>
-          <p>Transportation Type : {savedTransportation.transportationpType}</p>
+          <p>Transportation Type : {savedTransportation.transportationType}</p>
           <p>Transportation Price : {savedTransportation.transportationPrice}</p>
           <p>Transportation Departure : {savedTransportation.transportationDeparture}</p>
           <p>Transportation Arrival : {savedTransportation.transportationArrival}</p>
+          <button className='font-inder bg-purple-300' type="submit">Edit</button>
+          <button className='font-inder bg-purple-300' type="submit">Delete</button>
         </div>
+
       )}
       </div>
     </div>
