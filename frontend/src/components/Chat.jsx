@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { over } from "stompjs";
-import SockJS from "sockjs-client";
 import "../../dist/output.css";
 
 var stompClient = null;
@@ -19,8 +18,8 @@ const ChatRoom = () => {
   }, [userData]);
 
   const connect = () => {
-    let Sock = new SockJS("http://localhost:8080/ws");
-    stompClient = over(Sock);
+    stompClient = over(new WebSocket("ws://localhost:8080/ws"));
+
     stompClient.connect({}, onConnected, onError);
   };
 
