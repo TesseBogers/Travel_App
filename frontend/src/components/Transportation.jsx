@@ -72,7 +72,7 @@ useEffect(() => {
           />
         </div>
         <div>
-          <label>Transportation Price:</label>
+          <label><h2 className='font-inder text-palette-dark-color-3'>Transportation Price :</h2></label>
           <input
           type="number"
           name="transportationPrice"
@@ -81,7 +81,7 @@ useEffect(() => {
           />
         </div>
         <div>
-          <label>Transportation Departure:</label>
+          <label><h2 className='font-inder text-palette-dark-color-3'>Transportation Departure :</h2></label>
           <input
           type="text"
           name="transportationDeparture"
@@ -90,7 +90,7 @@ useEffect(() => {
           />
         </div>
         <div>
-          <label>Transportation Arrival:</label>
+          <label><h2 className='font-inder text-palette-dark-color-3'>Transportation Arrival :</h2></label>
           <input
           type="text"
           name="transportationArrival"

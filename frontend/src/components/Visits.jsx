@@ -61,7 +61,7 @@ useEffect(() => {
       <div className="w-1/2 mx-2">
       <form onSubmit={handleSubmit}>
         <div>
-          <label>Visits Name:</label>
+          <label><h2 className='font-inder text-palette-dark-color-3'>Visit name :</h2></label>
           <input
           type="text"
           name="visitName"
@@ -70,7 +70,7 @@ useEffect(() => {
           />
         </div>
         <div>
-          <label>Visits Price:</label>
+          <label><h2 className='font-inder text-palette-dark-color-3'>Visit price :</h2></label>
           <input
           type="number"
           name="visitPrice"
@@ -79,7 +79,7 @@ useEffect(() => {
           />
         </div>
         <div>
-          <label>Visits Address:</label>
+          <label><h2 className='font-inder text-palette-dark-color-3'>Visit address :</h2></label>
           <input
           type="text"
           name="visitAddress"

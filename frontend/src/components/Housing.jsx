@@ -62,7 +62,7 @@ useEffect(() => {
       <div className="w-1/2 mx-2">
       <form onSubmit={handleSubmit}>
         <div>
-          <label>Housing Name:</label>
+          <label><h2 className='font-inder text-palette-dark-color-3'>Housing name :</h2></label>
           <input
           type="text"
           name="housingName"
@@ -71,7 +71,7 @@ useEffect(() => {
           />
         </div>
         <div>
-          <label>Housing Price:</label>
+          <label><h2 className='font-inder text-palette-dark-color-3'>Housing price :</h2></label>
           <input
           type="number"
           name="housingPrice"
@@ -80,7 +80,7 @@ useEffect(() => {
           />
         </div>
         <div>
-          <label>Housing Address:</label>
+          <label><h2 className='font-inder text-palette-dark-color-3'>Housing address :</h2></label>
           <input
           type="text"
           name="housingAddress"

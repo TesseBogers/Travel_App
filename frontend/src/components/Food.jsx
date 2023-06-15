@@ -63,7 +63,7 @@ const Food = () => {
       <div className="w-1/2 mx-2">
         <form onSubmit={handleSubmit}>
           <div>
-            <label>Food Name:</label>
+            <label><h2 className='font-inder text-palette-dark-color-3'>Food Name :</h2></label>
             <input
               type="text"
               name="foodName"
@@ -72,7 +72,7 @@ const Food = () => {
             />
           </div>
           <div>
-            <label>Food Price:</label>
+            <label><h2 className='font-inder text-palette-dark-color-3'>Food Price :</h2></label>
             <input
               type="number"
               name="foodPrice"
@@ -81,7 +81,7 @@ const Food = () => {
             />
           </div>
           <div>
-            <label>Food Address:</label>
+            <label><h2 className='font-inder text-palette-dark-color-3'>Food Address :</h2></label>
             <input
               type="text"
               name="foodAddress"

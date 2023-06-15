@@ -10,10 +10,6 @@
     flex-wrap: wrap;
     margin: 0 -16px;
   }
-
-  h2{
-    margin-bottom: 10px;
-  }
   
   .col {
     flex: 50%;
