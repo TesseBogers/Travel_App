@@ -1,4 +1,5 @@
 // Tailwind
+@import 'normalize.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -37,6 +38,10 @@
 @import 'components/dropdown';
 @import 'components/forms';
 @import 'components/modals';
+@import 'components/admin';
+@import 'components/footer';
+@import "components/hero";
+@import "components/features";
 
 // Pages
 @import 'pages/home';
@@ -45,6 +50,8 @@
 @import 'pages/live-info';
 @import 'pages/chat';
 @import 'pages/attractions';
+@import 'pages/contact';
+@import 'pages/aboutUs';
 
 // Themes
 @import 'themes/darkmode';
@@ -70,6 +77,19 @@
 
 @include typography-classes('font-size', 'font', $font-size-scale, $line-height-scale, true);  // line-height is applied
 @include typography-classes('font-size', 'font', $font-size-scale, $line-height-scale, false);  // line-height is not applied
+
+*,
+*::before,
+*::after {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 
 a {
   text-decoration: none !important;
@@ -138,5 +158,13 @@ a {
       }
     }
   }
+}
+
+.heading-header {
+  font-size: 14px !important;
+}
+
+.title {
+  font-size: 12px !important;
 }
 

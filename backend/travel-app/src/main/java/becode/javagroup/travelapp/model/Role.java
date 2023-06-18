@@ -2,7 +2,6 @@ package becode.javagroup.travelapp.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -56,7 +55,7 @@ public class Role {
      * @see ManyToMany
      * @see User
      */
-    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
     @JsonBackReference
     private Set<User> users = new HashSet<>();
 
@@ -67,31 +66,11 @@ public class Role {
      * @see JoinColumn
      * @see Permission
      */
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "role_permissions",
             joinColumns = @JoinColumn(name = "role_id"),
             inverseJoinColumns = @JoinColumn(name = "permission_id")
     )
     private Set<Permission> permissions = new HashSet<>();
-
-    public void addUser(User user) {
-        this.users.add(user);
-        user.getRoles().add(this);
-    }
-
-    public void removeUser(User user) {
-        this.users.remove(user);
-        user.getRoles().remove(this);
-    }
-
-    public void addPermission(Permission permission) {
-        this.permissions.add(permission);
-        permission.getRoles().add(this);
-    }
-
-    public void removePermission(Permission permission) {
-        this.permissions.remove(permission);
-        permission.getRoles().remove(this);
-    }
 }

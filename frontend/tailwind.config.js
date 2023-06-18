@@ -48,13 +48,13 @@ export default {
         },
         'brand-blue': {
             // Primary blue color
-            '90-shades': '#040c10',
-            '60-shades': '#0e3140',
-            '30-shades': '#195670',
-            '0-shades': '#247BA0',
-            '30-light': '#66a3bd',
-            '60-light': '#a7cad9',
-            '90-light': '#e9f2f6',
+            '90-shades': '#001010',
+            '60-shades': '#013f3f',
+            '30-shades': '#016f6e',
+            '0-shades': '#029e9d',
+            '30-light': '#4ebbba',
+            '60-light': '#9ad8d8',
+            '90-light': '#e6f5f5',
         },
         'success': {
             // Color to display success related information

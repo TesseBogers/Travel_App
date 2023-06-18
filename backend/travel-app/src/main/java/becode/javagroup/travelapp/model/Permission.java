@@ -57,7 +57,7 @@ public class Permission {
      * @see ManyToMany
      * @see Role
      */
-    @ManyToMany(mappedBy = "permissions", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "permissions", fetch = FetchType.EAGER)
     private Set<Role> roles;
 
     public void addRole(Role role) {
