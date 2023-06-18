@@ -28,7 +28,7 @@ public class User {
     private String username;
 
     @JsonIgnore
-    private String passwordHash;
+    private String password;
 
     @Column(name = "salt")
     private String salt;

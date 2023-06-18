@@ -229,7 +229,7 @@ public class RoleService {
         UserDto userDto = new UserDto();
 
         userDto.setUsername(user.getUsername());
-        userDto.setPassword(user.getPasswordHash());
+        userDto.setPassword(user.getPassword());
         userDto.setEmail(user.getEmail());
 
         Set<String> roleNames = user.getRoles().stream()

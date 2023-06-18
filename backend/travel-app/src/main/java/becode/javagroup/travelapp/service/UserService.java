@@ -28,14 +28,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService {
 
-    /**
-     * The UserRepository is used to store and retrieve user data.
-     * The roleRepository is used to store and retrieve role data.
-     * The logger is used to log information, warnings, and errors.
-     * @see UserRepository
-     * @see RoleRepository
-     * @see Logger
-     */
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final UserProfileMapper userProfileMapper;
@@ -75,6 +67,18 @@ public class UserService {
         }
     }
 
+    public User authenticateUser(String username, String password) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("User not found with username: " + username));
+
+        if (user.getPassword() == null || !BCrypt.checkpw(password, user.getPassword())) {
+            throw new UserNotFoundException("User not found with username: " + username);
+        }
+
+        return user;
+    }
+
+
     private Set<Role> saveRoles(Set<Role> roles) {
         return new HashSet<>(roleRepository.saveAll(roles));
     }
@@ -82,7 +86,6 @@ public class UserService {
     private void assignRolesToUser(User user, Set<Role> roles) {
         user.setRoles(roles);
     }
-
 
     private void mapUserProfile(User user, UserProfileDto userProfileDto) {
         UserProfile userProfile = userProfileMapper.dtoToUserProfile(userProfileDto);
@@ -149,7 +152,7 @@ public class UserService {
     }
 
     public boolean checkPassword(User user, String passwordToCheck) {
-        return BCrypt.checkpw(passwordToCheck, user.getPasswordHash());
+        return BCrypt.checkpw(passwordToCheck, user.getPassword());
     }
 
     @Transactional
@@ -163,7 +166,7 @@ public class UserService {
         if(userDto.getPassword() != null && !userDto.getPassword().isEmpty()){
             String salt = BCrypt.gensalt(); // Create a new unique salt
             existingUser.setSalt(salt); // Store the salt with the user
-            existingUser.setPasswordHash(hashPassword(userDto.getPassword(), salt));
+            existingUser.setPassword(hashPassword(userDto.getPassword(), salt));
         }
 
         Set<Role> roleSet = fetchRoles(userDto.getRoles());
@@ -255,7 +258,7 @@ public class UserService {
         user.setUsername(userDto.getUsername());
         logger.info("Setting email: {}", userDto.getEmail());
         user.setEmail(userDto.getEmail());
-        user.setPasswordHash(hashedPassword);
+        user.setPassword(hashedPassword);
         user.setSalt(salt);
 
         return user;

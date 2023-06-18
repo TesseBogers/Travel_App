@@ -1,5 +1,6 @@
 package becode.javagroup.travelapp.controller;
 
+import becode.javagroup.travelapp.dto.LoginRequestDto;
 import becode.javagroup.travelapp.dto.UserDto;
 import becode.javagroup.travelapp.dto.UserResponseDto;
 import becode.javagroup.travelapp.exception.DuplicateUserException;
@@ -12,6 +13,8 @@ import becode.javagroup.travelapp.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +32,7 @@ import java.util.stream.Collectors;
 public class UserController {
     private final UserService userService;
     private final RoleService roleService;
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     @GetMapping
     public ResponseEntity<List<UserResponseDto>> getAllUsers() {
@@ -47,14 +51,24 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody @NotNull UserDto userDto) {
+        log.info("Attempting to create a user...");
         try {
             UserResponseDto userResponseDto = userService.createUser(userDto);
+            log.info("User created successfully");
             return ResponseEntity.ok(userResponseDto);
         } catch (DuplicateUserException exception) {
+            log.error("Duplicate user error", exception);
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         } catch (RoleNotFoundException exception) {
+            log.error("Role not found error", exception);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<User> login(@RequestBody LoginRequestDto loginRequestDto) {
+        User user = userService.authenticateUser(loginRequestDto.getUsername(), loginRequestDto.getPassword());
+        return ResponseEntity.ok(user);
     }
 
     @PutMapping("/{id}")
