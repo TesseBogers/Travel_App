@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import visitsImage from '../assets/images/parthenon.png';
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faLandmark} from "@fortawesome/free-solid-svg-icons"
 
 const Visits = () => {
   const [visits, setVisits] = useState({
@@ -48,7 +49,8 @@ const Visits = () => {
   return (
     <div className="flex flex-row my-5">
       <div className="image-container">
-        <img src={visitsImage} alt="Visits" />
+      <FontAwesomeIcon icon={faLandmark} size='3x' style={{ color: '#247BA0' }}/>
+      <h3 className='py-2 text-palette-dark-color-5 text-xl'>Visits</h3>
       </div>
       <div>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 px-4">
@@ -61,7 +63,7 @@ const Visits = () => {
               name="visitName"
               value={visits.visitName}
               onChange={handleInputChange}
-              placeholder="Visit Name..."
+              placeholder="Write name..."
             />
           </div>
           <div>
@@ -73,7 +75,7 @@ const Visits = () => {
               name="visitPrice"
               value={visits.visitPrice}
               onChange={handleInputChange}
-              placeholder="Visit Price..."
+              placeholder="Write price..."
             />
           </div>
           <div>
@@ -85,10 +87,10 @@ const Visits = () => {
               name="visitAddress"
               value={visits.visitAddress}
               onChange={handleInputChange}
-              placeholder="Visit Address..."
+              placeholder="Write address..."
             />
           </div>
-          <button className="font-inder bg-blue-400 py-2 px-6" type="submit">
+          <button className="font-inder text-palette-light-color-1 bg-brand-blue-0-shades py-2 px-6" type="submit">
             Save
           </button>
         </form>
@@ -97,10 +99,10 @@ const Visits = () => {
       <div className="flex flex-col gap-4 px-4">
         {savedVisits && (
           <div className='text-left'>
-            <p><span className='font-inder text-palette-dark-color-5'>Visit Name: </span>{savedVisits.visitName}</p>
-            <p><span className='font-inder text-palette-dark-color-5'>Visit Price: </span>{savedVisits.visitPrice}</p>
-            <p><span className='font-inder text-palette-dark-color-5'>Visit Address: </span>{savedVisits.visitAddress}</p>
-            <button className="font-inder bg-green-300 py-2 px-6 my-5 mx-2" type="submit">
+            <p><span className='font-inder text-palette-dark-color-5'>Name: </span>{savedVisits.visitName}</p>
+            <p><span className='font-inder text-palette-dark-color-5'>Price: </span>{savedVisits.visitPrice}</p>
+            <p><span className='font-inder text-palette-dark-color-5'>Address: </span>{savedVisits.visitAddress}</p>
+            <button className="font-inder bg-orange-300 py-2 px-6 my-5 mx-2" type="submit">
               Edit
             </button>
             <button className="font-inder bg-red-300 py-2 px-6 my-5 mx-2" type="submit">

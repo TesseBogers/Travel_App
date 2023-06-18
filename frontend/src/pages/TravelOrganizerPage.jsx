@@ -30,9 +30,9 @@ const TravelOrganizer = () => {
   return (
     <div className='flex flex-col'>
       <div className=''>
-        <h2 className="text-xl font-black font-roboto text-palette-dark-color-3">
+        <h1 className="font-roboto text-palette-dark-color-5">
           {days[currentDay].name}
-        </h2>
+        </h1>
         <div className='grid grid-cols-2'>
           <Transportation />
           <Housing />

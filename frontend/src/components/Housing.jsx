@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import housingImage from "../assets/images/signe-de-lhotel.png";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faBed} from "@fortawesome/free-solid-svg-icons"
 
 const Housing = () => {
   const [housing, setHousing] = useState({
@@ -48,7 +49,8 @@ const Housing = () => {
   return (
     <div className="flex flex-row my-5">
       <div className="image-container">
-        <img src={housingImage} alt="Housing" />
+      <FontAwesomeIcon icon={faBed} size='3x' style={{ color: '#247BA0' }}/>
+      <h3 className='py-2 text-palette-dark-color-5 text-xl'>Housing</h3>
       </div>
       <div>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 px-4">
@@ -61,7 +63,7 @@ const Housing = () => {
               name="housingName"
               value={housing.housingName}
               onChange={handleInputChange}
-              placeholder="Housing Name..."
+              placeholder="Write name..."
             />
           </div>
           <div>
@@ -73,7 +75,7 @@ const Housing = () => {
               name="housingPrice"
               value={housing.housingPrice}
               onChange={handleInputChange}
-              placeholder="Housing Price..."
+              placeholder="Write price..."
             />
           </div>
           <div>
@@ -85,10 +87,10 @@ const Housing = () => {
               name="housingAddress"
               value={housing.housingAddress}
               onChange={handleInputChange}
-              placeholder="Housing Address..."
+              placeholder="Write address..."
             />
           </div>
-          <button className="font-inder bg-blue-400 py-2 px-6" type="submit">
+          <button className="font-inder text-palette-light-color-1 bg-brand-blue-0-shades py-2 px-6" type="submit">
             Save
           </button>
         </form>
@@ -97,10 +99,10 @@ const Housing = () => {
       <div className="flex flex-col gap-4 px-4">
         {savedHousing && (
           <div className='text-left'>
-            <p><span className='font-inder text-palette-dark-color-5'>Housing Name : </span>{savedHousing.housingName}</p>
-            <p><span className='font-inder text-palette-dark-color-5'>Housing Price: </span>{savedHousing.housingPrice}</p>
-            <p><span className='font-inder text-palette-dark-color-5'>Housing Address: </span>{savedHousing.housingAddress}</p>
-            <button className="font-inder bg-green-300 py-2 px-6 my-5 mx-2" type="submit">
+            <p><span className='font-inder text-palette-dark-color-5'>Name : </span>{savedHousing.housingName}</p>
+            <p><span className='font-inder text-palette-dark-color-5'>Price: </span>{savedHousing.housingPrice}</p>
+            <p><span className='font-inder text-palette-dark-color-5'>Address: </span>{savedHousing.housingAddress}</p>
+            <button className="font-inder bg-orange-300 py-2 px-6 my-5 mx-2" type="submit">
               Edit
             </button>
             <button className="font-inder bg-red-300 py-2 px-6 my-5 mx-2" type="submit">
