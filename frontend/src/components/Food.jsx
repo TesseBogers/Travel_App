@@ -122,7 +122,7 @@ const Food = () => {
           {!savedFood && (
               <form onSubmit={handleSave} className="flex flex-col gap-4 px-4">
                 <div>
-                  <label className="hidden">
+                  <label className="hidden" >
                     <h2 className="font-inder text-palette-dark-color-3">Food Name :</h2>
                   </label>
                   <input

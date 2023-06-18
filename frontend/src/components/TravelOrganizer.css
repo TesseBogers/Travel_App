@@ -41,8 +41,11 @@
   object-fit: contain;
 }
 
-.input {
-  background-color: #ffff !important;
+.container{
+    border-color: #195670;
+    border-style: solid;
+    border-width: 3px;
+    border-radius: 5px;
 }
 
 .icons {
