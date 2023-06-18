@@ -1,3 +1,4 @@
+// TransportationController.java
 package becode.javagroup.travelapp.controller;
 
 import becode.javagroup.travelapp.model.Transportation;
@@ -11,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/transportation")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "*")
 public class TransportationController {
 
     private final TransportationRepository transportationRepository;
@@ -57,12 +58,13 @@ public class TransportationController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTransportation(@PathVariable Long id) {
-        Transportation existingTransportation = transportationRepository.findById(id).orElse(null);
-        if (existingTransportation != null) {
-            transportationRepository.delete(existingTransportation);
+        try {
+            transportationRepository.deleteById(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
+
+

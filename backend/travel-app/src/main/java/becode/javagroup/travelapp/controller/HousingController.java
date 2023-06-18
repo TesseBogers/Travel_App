@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/housing")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "*")
 public class HousingController {
 
     private final HousingRepository housingRepository;
@@ -66,4 +66,3 @@ public class HousingController {
         }
     }
 }
-

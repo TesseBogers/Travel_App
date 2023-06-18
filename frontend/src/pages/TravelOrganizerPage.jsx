@@ -4,46 +4,55 @@ import Housing from '../components/Housing';
 import Transportation from '../components/Transportation';
 import Visits from '../components/Visits';
 import '../components/TravelOrganizer.css';
+import ArrowLeft from '../assets/images/before.png';
+import ArrowRight from '../assets/images/next.png';
 
 const TravelOrganizer = () => {
   const [currentDay, setCurrentDay] = useState(0);
+  const days = [
+    { name: 'Monday' },
+    { name: 'Tuesday' },
+    { name: 'Wednesday' },
+    { name: 'Thursday' },
+    { name: 'Friday' },
+    { name: 'Saturday' },
+    { name: 'Sunday' },
+  ];
 
   const handlePrevDay = () => {
-    setCurrentDay((prevDay) => prevDay - 1);
+    setCurrentDay((prevDay) => (prevDay === 0 ? days.length - 1 : prevDay - 1));
   };
 
   const handleNextDay = () => {
-    setCurrentDay((prevDay) => prevDay + 1);
+    setCurrentDay((prevDay) => (prevDay === days.length - 1 ? 0 : prevDay + 1));
   };
 
   return (
-    <div className="travel-organizer">
-      <div className="col">
-      <h2 className="text-xl font-bold font-inder text-palette-dark-color-3">
-            {days[currentDay].name}
-          </h2>
-        <div className="col grid gap-4 grid-cols-2 grid-rows-2 py-4">
+    <div className='flex flex-col'>
+      <div className=''>
+        <h2 className="text-xl font-black font-roboto text-palette-dark-color-3">
+          {days[currentDay].name}
+        </h2>
+        <div className='grid grid-cols-2'>
           <Transportation />
           <Housing />
           <Visits />
           <Food />
         </div>
       </div>
-      <div className="flex flex-col justify-between mt-4">
+      <div className='flex gap-2 mx-auto'>
         {currentDay > 0 && (
-          <button
-            className="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-6 rounded"
-            onClick={handlePrevDay}
-          >
-            Previous Day
+          <button className="arrow-button" onClick={handlePrevDay}>
+            <span className="arrow-left">
+              <img src={ArrowLeft} alt="ArrowLeft" />
+            </span>
           </button>
         )}
         {currentDay < days.length - 1 && (
-          <button
-            className="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-6 rounded"
-            onClick={handleNextDay}
-          >
-            Next Day
+          <button className="arrow-button" onClick={handleNextDay}>
+            <span className="arrow-right">
+              <img src={ArrowRight} alt="" />
+            </span>
           </button>
         )}
       </div>
@@ -51,15 +60,7 @@ const TravelOrganizer = () => {
   );
 };
 
-const days = [
-  { name: 'Monday' },
-  { name: 'Tuesday' },
-  { name: 'Wednesday' },
-  { name: 'Thursday' },
-  { name: 'Friday' },
-  { name: 'Saturday' },
-  { name: 'Sunday' },
-];
-
 export default TravelOrganizer;
+
+
 

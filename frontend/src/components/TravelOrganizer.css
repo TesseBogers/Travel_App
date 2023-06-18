@@ -1,38 +1,60 @@
+/* CSS */
+*,
+*::after,
+*::before {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
 .travel-organizer {
-    display: flex;
-    flex-wrap: wrap;
-  }
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
 
-  .row {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 0 -16px;
-  }
-  
-  .col {
-    flex: 50%;
-    margin: 10px;
-    text-align: center;
-    background-color: #ececec;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  .logo {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-  }
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -16px;
+}
 
-  .input {
-    background-color: #ffff !important;
-  }
+.col {
+  flex: 50%;
+  margin: 10px;
+  text-align: center;
+  background-color: #ececec;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
 
-  .icons {
-    width: 100px;
-    height: 100px;
-  }
+.image-container {
+  width: 100px;
+  height: 100px;
+  align-self: center;
+  padding: 0px 15px 0px 15px;
+}
 
-  
-  /* Add media queries for responsive design if needed */
+.logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.input {
+  background-color: #ffff !important;
+}
+
+.icons {
+  width: 100px;
+  height: 100px;
+}
+
+.arrow-button img {
+  width: 50px;
+  height: 50px;
+}
+
+/* Add media queries for responsive design if needed */
+
   
