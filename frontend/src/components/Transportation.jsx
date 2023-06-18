@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import TranspImage from "../assets/images/avion-aerien.png";
+import TranspImage from "../assets/images/avion.png";
 
 const Transportation = () => {
   const [transportation, setTransportation] = useState({

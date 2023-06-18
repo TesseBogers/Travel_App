@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useState, useEffect } from 'react';
-import FoodImage from "../assets/images/coutellerie.png";
+import FoodImage from "../assets/images/restaurant.png";
 
 const Food = () => {
   const [food, setFood] = useState({

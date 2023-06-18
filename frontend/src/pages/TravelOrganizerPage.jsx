@@ -4,8 +4,8 @@ import Housing from '../components/Housing';
 import Transportation from '../components/Transportation';
 import Visits from '../components/Visits';
 import '../components/TravelOrganizer.css';
-import ArrowLeft from '../assets/images/before.png';
-import ArrowRight from '../assets/images/next.png';
+import ArrowLeft from '../assets/images/contour-du-bouton-circulaire-fleche-arriere-gauche.png';
+import ArrowRight from '../assets/images/contour-du-bouton-circulaire-fleche-droite.png';
 
 const TravelOrganizer = () => {
   const [currentDay, setCurrentDay] = useState(0);

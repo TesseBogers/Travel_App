@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import visitsImage from "../assets/images/holstentor.png";
+import visitsImage from "../assets/images/parthenon.png";
 
 const Visits = () => {
   const [visits, setVisits] = useState({
