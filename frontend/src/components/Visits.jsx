@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import visitsImage from "../assets/images/parthenon.png";
+import React, { useState } from 'react';
+import visitsImage from '../assets/images/parthenon.png';
 
 const Visits = () => {
   const [visits, setVisits] = useState({
@@ -37,7 +37,6 @@ const Visits = () => {
           visitPrice: '',
           visitAddress: '',
         });
-        localStorage.setItem('savedVisits', JSON.stringify(savedVisits));
       } else {
         throw new Error('Failed to save visits');
       }
@@ -46,20 +45,13 @@ const Visits = () => {
     }
   };
 
-  useEffect(() => {
-    const savedVisitsData = JSON.parse(localStorage.getItem('savedVisits'));
-    if (savedVisitsData) {
-      setSavedVisits(savedVisitsData);
-    }
-  }, []);
-
   return (
-    <div className='flex flex-row my-5'>
-      <div className='image-container'>
+    <div className="flex flex-row my-5">
+      <div className="image-container">
         <img src={visitsImage} alt="Visits" />
       </div>
       <div>
-        <form onSubmit={handleSubmit} className='flex flex-col gap-4 px-4'>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 px-4">
           <div>
             <label className='hidden'>
               <h2 className="font-inder text-palette-dark-color-3">Visit name :</h2>
@@ -69,7 +61,7 @@ const Visits = () => {
               name="visitName"
               value={visits.visitName}
               onChange={handleInputChange}
-              placeholder='Visit Name...'
+              placeholder="Visit Name..."
             />
           </div>
           <div>
@@ -81,7 +73,7 @@ const Visits = () => {
               name="visitPrice"
               value={visits.visitPrice}
               onChange={handleInputChange}
-              placeholder='Visit Price...'
+              placeholder="Visit Price..."
             />
           </div>
           <div>
@@ -93,21 +85,27 @@ const Visits = () => {
               name="visitAddress"
               value={visits.visitAddress}
               onChange={handleInputChange}
-              placeholder='Visit Adress...'
+              placeholder="Visit Address..."
             />
           </div>
-          <button className="font-inder bg-blue-400 py-2 px-6" type="submit text-lg font-bold font-inder">Save</button>
+          <button className="font-inder bg-blue-400 py-2 px-6" type="submit">
+            Save
+          </button>
         </form>
       </div>
 
-      <div className='flex flex-col gap-4 px-4'>
+      <div className="flex flex-col gap-4 px-4">
         {savedVisits && (
-          <div>
-            <p>Visit Name: {savedVisits.visitName}</p>
-            <p>Visit Price: {savedVisits.visitPrice}</p>
-            <p>Visit Address: {savedVisits.visitAddress}</p>
-            <button className="font-inder bg-green-300 py-2 px-6" type="submit text-lg font-bold font-inder">Edit</button>
-            <button className="font-inder bg-red-300 py-2 px-6" type="submit text-lg font-bold font-inder">Delete</button>
+          <div className='text-left'>
+            <p><span className='font-inder text-palette-dark-color-5'>Visit Name: </span>{savedVisits.visitName}</p>
+            <p><span className='font-inder text-palette-dark-color-5'>Visit Price: </span>{savedVisits.visitPrice}</p>
+            <p><span className='font-inder text-palette-dark-color-5'>Visit Address: </span>{savedVisits.visitAddress}</p>
+            <button className="font-inder bg-green-300 py-2 px-6 my-5 mx-2" type="submit">
+              Edit
+            </button>
+            <button className="font-inder bg-red-300 py-2 px-6 my-5 mx-2" type="submit">
+              Delete
+            </button>
           </div>
         )}
       </div>
@@ -116,3 +114,4 @@ const Visits = () => {
 };
 
 export default Visits;
+

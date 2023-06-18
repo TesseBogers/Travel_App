@@ -1,6 +1,5 @@
-// eslint-disable-next-line no-unused-vars
-import React, { useState, useEffect } from 'react';
-import FoodImage from "../assets/images/restaurant.png";
+import React, { useState } from 'react';
+import FoodImage from '../assets/images/restaurant.png';
 
 const Food = () => {
   const [food, setFood] = useState({
@@ -38,8 +37,6 @@ const Food = () => {
           foodPrice: '',
           foodAddress: '',
         });
-        // Save the data in local storage
-        localStorage.setItem('savedFood', JSON.stringify(savedFood));
       } else {
         throw new Error('Failed to save food');
       }
@@ -48,21 +45,13 @@ const Food = () => {
     }
   };
 
-  useEffect(() => {
-    // Retrieve the data from local storage on component mount
-    const savedFoodData = localStorage.getItem('savedFood');
-    if (savedFoodData) {
-      setSavedFood(JSON.parse(savedFoodData));
-    }
-  }, []);
-
   return (
-    <div className='flex flex-row my-5'>
-      <div className='image-container'>
-        <img src={FoodImage} alt="Food"/>
+    <div className="flex flex-row my-5">
+      <div className="image-container">
+        <img src={FoodImage} alt="Food" />
       </div>
       <div>
-        <form onSubmit={handleSubmit} className='flex flex-col gap-4 px-4'>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 px-4">
           <div>
             <label className='hidden'>
               <h2 className="font-inder text-palette-dark-color-3">Food Name :</h2>
@@ -72,7 +61,7 @@ const Food = () => {
               name="foodName"
               value={food.foodName}
               onChange={handleInputChange}
-              placeholder='Food Name...'
+              placeholder="Food Name..."
             />
           </div>
           <div>
@@ -84,7 +73,7 @@ const Food = () => {
               name="foodPrice"
               value={food.foodPrice}
               onChange={handleInputChange}
-              placeholder='Food Price...'
+              placeholder="Food Price..."
             />
           </div>
           <div>
@@ -96,21 +85,27 @@ const Food = () => {
               name="foodAddress"
               value={food.foodAddress}
               onChange={handleInputChange}
-              placeholder='Food Address...'
+              placeholder="Food Address..."
             />
           </div>
-          <button className="font-inder bg-blue-400 py-2 px-6" type="submit text-lg font-bold font-inder">Save</button>
+          <button className="font-inder bg-blue-400 py-2 px-6" type="submit">
+            Save
+          </button>
         </form>
       </div>
 
-      <div className='flex flex-col gap-4 px-4'>
+      <div className="flex flex-col gap-4 px-4">
         {savedFood && (
-          <div>
-            <p>Food Name: {savedFood.foodName}</p>
-            <p>Food Price: {savedFood.foodPrice}</p>
-            <p>Food Address: {savedFood.foodAddress}</p>
-            <button className="font-inder bg-green-300 py-2 px-6" type="submit text-lg font-bold font-inder">Edit</button>
-            <button className="font-inder bg-red-300 py-2 px-6" type="submit text-lg font-bold font-inder">Delete</button>
+          <div className='text-left'>
+            <p><span className='font-inder text-palette-dark-color-5'>Food Name: </span>{savedFood.foodName}</p>
+            <p><span className='font-inder text-palette-dark-color-5'>Food Price: </span>{savedFood.foodPrice}</p>
+            <p><span className='font-inder text-palette-dark-color-5'>Food Address: </span>{savedFood.foodAddress}</p>
+            <button className="font-inder bg-green-300 py-2 px-6 my-5 mx-2" type="submit">
+              Edit
+            </button>
+            <button className="font-inder bg-red-300 py-2 px-6 my-5 mx-2" type="submit">
+              Delete
+            </button>
           </div>
         )}
       </div>
@@ -119,6 +114,7 @@ const Food = () => {
 };
 
 export default Food;
+
 
 
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import housingImage from "../assets/images/signe-de-lhotel.png";
 
 const Housing = () => {
@@ -37,7 +37,6 @@ const Housing = () => {
           housingPrice: '',
           housingAddress: '',
         });
-        localStorage.setItem('savedHousing', JSON.stringify(savedHousing));
       } else {
         throw new Error('Failed to save housing');
       }
@@ -46,20 +45,13 @@ const Housing = () => {
     }
   };
 
-  useEffect(() => {
-    const savedHousingData = JSON.parse(localStorage.getItem('savedHousing'));
-    if (savedHousingData) {
-      setSavedHousing(savedHousingData);
-    }
-  }, []);
-
   return (
-    <div className='flex flex-row my-5'>
-      <div className='image-container'>
+    <div className="flex flex-row my-5">
+      <div className="image-container">
         <img src={housingImage} alt="Housing" />
       </div>
       <div>
-        <form onSubmit={handleSubmit} className='flex flex-col gap-4 px-4'>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 px-4">
           <div>
             <label className='hidden'>
               <h2 className="font-inder text-palette-dark-color-3">Housing name :</h2>
@@ -69,7 +61,7 @@ const Housing = () => {
               name="housingName"
               value={housing.housingName}
               onChange={handleInputChange}
-              placeholder='Housing Name...'
+              placeholder="Housing Name..."
             />
           </div>
           <div>
@@ -81,7 +73,7 @@ const Housing = () => {
               name="housingPrice"
               value={housing.housingPrice}
               onChange={handleInputChange}
-              placeholder='Housing Price...'
+              placeholder="Housing Price..."
             />
           </div>
           <div>
@@ -93,21 +85,27 @@ const Housing = () => {
               name="housingAddress"
               value={housing.housingAddress}
               onChange={handleInputChange}
-              placeholder='Housing Address...'
+              placeholder="Housing Address..."
             />
           </div>
-          <button className="font-inder bg-blue-400 py-2 px-6" type="submit text-lg font-bold font-inder">Save</button>
+          <button className="font-inder bg-blue-400 py-2 px-6" type="submit">
+            Save
+          </button>
         </form>
       </div>
 
-      <div className='flex flex-col gap-4 px-4'>
+      <div className="flex flex-col gap-4 px-4">
         {savedHousing && (
-          <div>
-            <p>Housing Name: {savedHousing.housingName}</p>
-            <p>Housing Price: {savedHousing.housingPrice}</p>
-            <p>Housing Address: {savedHousing.housingAddress}</p>
-            <button className="font-inder bg-green-300 py-2 px-6" type="submit text-lg font-bold font-inder">Edit</button>
-            <button className="font-inder bg-red-300 py-2 px-6" type="submit text-lg font-bold font-inder">Delete</button>
+          <div className='text-left'>
+            <p><span className='font-inder text-palette-dark-color-5'>Housing Name : </span>{savedHousing.housingName}</p>
+            <p><span className='font-inder text-palette-dark-color-5'>Housing Price: </span>{savedHousing.housingPrice}</p>
+            <p><span className='font-inder text-palette-dark-color-5'>Housing Address: </span>{savedHousing.housingAddress}</p>
+            <button className="font-inder bg-green-300 py-2 px-6 my-5 mx-2" type="submit">
+              Edit
+            </button>
+            <button className="font-inder bg-red-300 py-2 px-6 my-5 mx-2" type="submit">
+              Delete
+            </button>
           </div>
         )}
       </div>
@@ -116,3 +114,4 @@ const Housing = () => {
 };
 
 export default Housing;
+
