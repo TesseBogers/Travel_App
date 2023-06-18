@@ -1,0 +1,19 @@
+.label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    margin: 10px;
+}
+
+.checkbox {
+    margin-left: 8px;
+}
+.App{
+display: flex;
+flex-direction: row;
+height: auto;
+}
+.titleNbutton{
+position: absolute;
+}

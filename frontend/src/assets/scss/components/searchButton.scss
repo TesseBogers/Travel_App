@@ -1,0 +1,13 @@
+.searchButton{
+  background-color: #71DFC9;
+  color: $brand-blue-30-shades;
+  font-weight: bolder;
+  width: 80%;
+  margin-top: 10px;
+  transition: 1s;
+  height: 45px;
+}
+.searchButton:hover{
+  width: 85%;
+  height: 55px ;
+}

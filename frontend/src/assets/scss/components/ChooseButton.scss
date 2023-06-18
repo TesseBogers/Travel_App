@@ -1,0 +1,25 @@
+.list-group{
+  display: flex;
+  justify-content: center;
+}
+.zoom-button{
+  color: $success-90-light;
+  font-size: 25px;
+  margin: 10px;
+  height: 9rem;
+  width: 9rem;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: transform 0.3s;
+  transition: 0.5s;
+  display: flex;
+  justify-content: center;
+}
+
+.zoom-button:hover {
+   transform: scale(1.1);
+  font-size: 28px;
+  border: 5px solid $brand-blue-30-shades;
+  color: $palette-light-color-5;
+ }
