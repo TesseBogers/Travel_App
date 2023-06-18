@@ -1,9 +1,9 @@
 export const ROLES = [
     { value: "select role", label: "Select Role"},
-    { value: "admin", label: "Admin" },
-    { value: "user", label: "User" },
-    { value: "moderator", label: "Moderator" },
-    { value: "traveler", label: "Traveler" },
+    { value: "ADMIN", label: "Admin" },
+    { value: "USER", label: "User" },
+    { value: "MODERATOR", label: "Moderator" },
+    { value: "TRAVELER", label: "Traveler" },
 ];
 
 export const COUNTRIES = [

@@ -2,7 +2,7 @@ import { useState, useContext } from 'react';
 import AuthContext from "../context/AuthContext.jsx";
 import { Link } from "react-router-dom";
 import axios from "../api/axios.js";
-import {validateForm, validateField} from "../utils/validateForm.js";
+import {validateForm, validateField, validateRole} from "../utils/validateForm.js";
 import {ROLES, COUNTRIES, LANGUAGES, CURRENCIES} from "../utils/constants.js";
 
 const SIGNUP_ENDPOINT = "/api/users";
@@ -18,6 +18,7 @@ const SignUp = () => {
         firstName: '',
         lastName: '',
         dateOfBirth: '',
+        role: [],
         country: '',
         preferredLanguage: '',
         preferredCurrency: '',
@@ -31,6 +32,16 @@ const SignUp = () => {
 
     const handleSignup = async (event) => {
         event.preventDefault();
+
+        const roleError = validateRole(userInput.role);
+        if (roleError) {
+            setErrors(prevErrors => ({
+                ...prevErrors,
+                role: roleError
+            }));
+            return;
+        }
+
         const validationErrors = validateForm(userInput);
         console.log("Validation Errors:", validationErrors);
         if (validationErrors) {
@@ -51,7 +62,7 @@ const SignUp = () => {
             username: userInput.username,
             password: userInput.password,
             email: userInput.email,
-            roles: [role],
+            roles: userInput.role,
             userProfile: userProfileData,
         };
 
@@ -75,7 +86,8 @@ const SignUp = () => {
 
     const handleChange = (event) => {
         const name = event.target.name;
-        const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
+        const value = event.target.type === 'checkbox' ? event.target.checked :
+            (event.target.type === 'select-multiple' ? Array.from(event.target.selectedOptions, option => option.value) : event.target.value);
         const confirmValue = name === 'password' ? userInput.confirmPassword :
             (name === 'email' ? userInput.confirmEmail : '');
 
@@ -84,7 +96,13 @@ const SignUp = () => {
             [name]: value
         });
 
-        const fieldErrors = validateField(name, value, confirmValue);
+        let fieldErrors;
+        if (name === 'role') {
+            fieldErrors = validateRole(value);
+        } else {
+            fieldErrors = validateField(name, value, confirmValue);
+        }
+
         setErrors(prevErrors => ({
             ...prevErrors,
             [name]: fieldErrors
@@ -99,7 +117,7 @@ const SignUp = () => {
                     switch(key) {
                         case 'role':
                             return (
-                                <select name="role" onChange={handleChange} className="w-full p-2 border border-gray-300 rounded" value={userInput.role}>
+                                <select key="role" name="role" onChange={handleChange} multiple className="w-full p-2 border border-gray-300 rounded" value={userInput.role}>
                                     {ROLES.map((role) => (
                                         <option key={role.value} value={role.value}>{role.label}</option>
                                     ))}

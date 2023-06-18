@@ -95,27 +95,31 @@ public class UserService {
         Set<Role> roles = new HashSet<>();
 
         for (String roleName : roleNames) {
-            Optional<Role> optionalRole = roleRepository.findByRoleName(roleName);
-            if (optionalRole.isPresent()) {
-                Role role = optionalRole.get();
-                role.getPermissions().clear(); // clear existing permissions
+            Role role = roleRepository.findByRoleName(roleName)
+                    .orElseGet(() -> {
+                        Role newRole = new Role();
+                        newRole.setRoleName(roleName);
+                        roleRepository.save(newRole);
+                        return newRole;
+                    });
 
-                switch (roleName) {
-                    case "ROLE_USER" -> assignUserPermissions(role);
-                    case "ROLE_ADMIN" -> assignAdminPermissions(role);
-                    case "ROLE_MODERATOR" -> assignModeratorPermissions(role);
-                    case "ROLE_TRAVELER" -> assignTravelerPermissions(role);
-                    default -> throw new IllegalArgumentException("Invalid role: " + roleName);
-                }
+            role.getPermissions().clear(); // clear existing permissions
+            assignPermissionsToRole(role, roleName);
 
-                roles.add(role);
-            } else {
-                Role newRole = new Role();
-                newRole.setRoleName(roleName);
-                roles.add(newRole);
-            }
+            roles.add(role);
         }
+
         return roles;
+    }
+
+    private void assignPermissionsToRole(Role role, String roleName) {
+        switch (roleName) {
+            case "USER" -> assignUserPermissions(role);
+            case "ADMIN" -> assignAdminPermissions(role);
+            case "MODERATOR" -> assignModeratorPermissions(role);
+            case "TRAVELER" -> assignTravelerPermissions(role);
+            default -> throw new IllegalArgumentException("Invalid role: " + roleName);
+        }
     }
 
     private void assignUserPermissions(Role role) {

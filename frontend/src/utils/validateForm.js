@@ -1,4 +1,5 @@
-// Helper functions to validate different parts of the form
+import { ROLES } from "./constants.js";
+
 function validateUsername(username) {
     if (!username.trim()) {
         return "Username is required";
@@ -48,17 +49,25 @@ function validateConfirmPassword(password, confirmPassword) {
     return null;
 }
 
-function validateAge(age) {
-    if (age.trim() && isNaN(age)) {
-        return "Age must be a numeric value";
+export function validateRole(roles) {
+    if (!roles.length) {
+        return "At least one role is required";
     }
+
+    const validRoles = ROLES.map(role => role.value);
+
+    for (let role of roles) {
+        if (!validRoles.includes(role)) {
+            return `Invalid role: ${role}`;
+        }
+    }
+
     return null;
 }
 
 function validateDateOfBirth(dateOfBirth) {
     const currentDate = new Date();
     const enteredDate = new Date(dateOfBirth);
-
     if (dateOfBirth.trim() && isNaN(enteredDate.getTime())) {
         return "Invalid date format";
     } else if (enteredDate > currentDate) {
@@ -74,13 +83,6 @@ function validateTermsAccepted(termsAccepted) {
     return null;
 }
 
-function validateCountry(country) {
-    if (country === "") {
-        return "Please select a country";
-    }
-    return null;
-}
-
 function validateGDPR(gdpr) {
     if (!gdpr) {
         return "You must accept the GDPR Privacy Policy";
@@ -89,7 +91,6 @@ function validateGDPR(gdpr) {
 }
 
 export function validateForm(formData = {}) {
-    // Provide default values to prevent TypeError
     const {
         username = '',
         password = '',
@@ -97,27 +98,21 @@ export function validateForm(formData = {}) {
         email = '',
         confirmEmail = '',
         gdpr = false,
-        age = '',
         dateOfBirth = '',
-        termsAccepted = false,
-        country = ''
+        termsAccepted = false
     } = formData;
 
     let errors = {};
 
-    // Validate individual fields
     errors.username = validateUsername(username);
     errors.password = validatePassword(password);
     errors.confirmPassword = validateConfirmPassword(password, confirmPassword);
     errors.email = validateEmail(email);
     errors.confirmEmail = validateConfirmEmail(email, confirmEmail);
     errors.gdpr = validateGDPR(gdpr);
-    errors.age = validateAge(age);
     errors.dateOfBirth = validateDateOfBirth(dateOfBirth);
     errors.termsAccepted = validateTermsAccepted(termsAccepted);
-    errors.country = validateCountry(country);
 
-    // Remove null values from errors object
     Object.keys(errors).forEach(key => errors[key] === null && delete errors[key]);
 
     return Object.keys(errors).length > 0 ? errors : null;
@@ -145,17 +140,11 @@ export function validateField(fieldName, value = '', confirmValue = '') {
         case "gdpr":
             error = validateGDPR(value);
             break;
-        case "age":
-            error = validateAge(value);
-            break;
         case "dateOfBirth":
             error = validateDateOfBirth(value);
             break;
         case "termsAccepted":
             error = validateTermsAccepted(value);
-            break;
-        case "country":
-            error = validateCountry(value);
             break;
         default:
             break;

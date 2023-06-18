@@ -7,10 +7,10 @@ import com.fasterxml.jackson.annotation.JsonCreator;
  * This enum is used to define the roles in the database.
  */
 public enum RoleName {
-    ROLE_USER("ROLE_USER"),
-    ROLE_ADMIN("ROLE_ADMIN"),
-    ROLE_MODERATOR("ROLE_MODERATOR"),
-    ROLE_TRAVELER("ROLE_TRAVELER");
+    ROLE_USER("USER"),
+    ROLE_ADMIN("ADMIN"),
+    ROLE_MODERATOR("MODERATOR"),
+    ROLE_TRAVELER("TRAVELER");
 
     private final String value;
 
