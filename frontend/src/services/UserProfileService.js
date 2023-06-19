@@ -1,6 +1,6 @@
 import axios from 'axios';
+import { API_URL } from './UserService.js';
 
-const API_URL = 'http://localhost:3290/';
 
 class UserProfileService {
     async getAllProfiles() {

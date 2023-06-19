@@ -1,0 +1,36 @@
+.feature-card {
+  transition: all ease-in-out 0.5s;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    transform-origin: bottom;
+    transform: scaleY(0);
+    transition: all ease-in-out 0.5s;
+    background: #029e9d !important;
+    cursor: pointer;
+  }
+
+  &:hover::before {
+    transform: scaleY(1);
+  }
+
+  .feature-card-content {
+    z-index: 1;
+    position: relative;
+  }
+
+  &:hover .icon-card,
+  &:hover a,
+  &:hover p {
+    color: #fff !important;
+    transition: all ease-in-out 0.5s;
+  }
+}

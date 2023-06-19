@@ -1,15 +1,20 @@
 package becode.javagroup.travelapp.controller;
 
+import becode.javagroup.travelapp.configuration.JwtUtil;
+import becode.javagroup.travelapp.dto.AuthenticationResponseDto;
 import becode.javagroup.travelapp.dto.LoginRequestDto;
 import becode.javagroup.travelapp.dto.UserDto;
 import becode.javagroup.travelapp.dto.UserResponseDto;
 import becode.javagroup.travelapp.exception.DuplicateUserException;
 import becode.javagroup.travelapp.exception.RoleNotFoundException;
 import becode.javagroup.travelapp.exception.UserNotFoundException;
+import becode.javagroup.travelapp.exception.AuthenticationException;
 import becode.javagroup.travelapp.model.RoleName;
 import becode.javagroup.travelapp.model.User;
+import becode.javagroup.travelapp.repository.UserRepository;
 import becode.javagroup.travelapp.service.RoleService;
 import becode.javagroup.travelapp.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -32,6 +37,8 @@ import java.util.stream.Collectors;
 public class UserController {
     private final UserService userService;
     private final RoleService roleService;
+    private final JwtUtil jwtUtil;
+    private final UserRepository userRepository;
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     @GetMapping
@@ -66,10 +73,31 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody LoginRequestDto loginRequestDto) {
-        User user = userService.authenticateUser(loginRequestDto.getUsername(), loginRequestDto.getPassword());
-        return ResponseEntity.ok(user);
+    public ResponseEntity<AuthenticationResponseDto> login(@RequestBody LoginRequestDto loginRequestDto) throws AuthenticationException {
+        String jwt = userService.authenticateUser(loginRequestDto.getUsername(), loginRequestDto.getPassword());
+        return ResponseEntity.ok(new AuthenticationResponseDto(jwt));
     }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthenticationResponseDto> refresh(@RequestHeader("Authorization") String token) {
+        String username = jwtUtil.extractUsername(token);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("User not found with username: " + username));
+        String jwt = jwtUtil.generateToken(user);
+        return ResponseEntity.ok(new AuthenticationResponseDto(jwt));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserResponseDto> getCurrentUser(HttpServletRequest request) {
+        try {
+            User user = userService.getCurrentUser(request);
+            return ResponseEntity.ok(new UserResponseDto(user));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+
+
 
     @PutMapping("/{id}")
     public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long id, @Valid @RequestBody @NotNull UserDto userDetails) {
