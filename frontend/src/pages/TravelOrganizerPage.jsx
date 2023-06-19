@@ -8,59 +8,83 @@ import ArrowLeft from '../assets/images/contour-du-bouton-circulaire-fleche-arri
 import ArrowRight from '../assets/images/contour-du-bouton-circulaire-fleche-droite.png';
 
 const TravelOrganizer = () => {
-  const [currentDay, setCurrentDay] = useState(0);
-  const days = [
-    { name: 'Monday' },
-    { name: 'Tuesday' },
-    { name: 'Wednesday' },
-    { name: 'Thursday' },
-    { name: 'Friday' },
-    { name: 'Saturday' },
-    { name: 'Sunday' },
-  ];
+    const [currentDay, setCurrentDay] = useState(0);
+    const [foodData, setFoodData] = useState([]);
+    const [housingData, setHousingData] = useState([]);
+    const [transportationData, setTransportationData] = useState([]);
+    const [visitsData, setVisitsData] = useState([]);
 
-  const handlePrevDay = () => {
-    setCurrentDay((prevDay) => (prevDay === 0 ? days.length - 1 : prevDay - 1));
-  };
+    const days = [
+        { name: 'Monday' },
+        { name: 'Tuesday' },
+        { name: 'Wednesday' },
+        { name: 'Thursday' },
+        { name: 'Friday' },
+        { name: 'Saturday' },
+        { name: 'Sunday' },
+    ];
 
-  const handleNextDay = () => {
-    setCurrentDay((prevDay) => (prevDay === days.length - 1 ? 0 : prevDay + 1));
-  };
+    const handleFoodData = (data) => {
+        const updatedData = [...foodData];
+        updatedData[currentDay] = data;
+        setFoodData(updatedData);
+    };
 
-  return (
-    <div className='flex flex-col'>
-      <div className=''>
-        <h1 className="font-roboto text-palette-dark-color-5">
-          {days[currentDay].name}
-        </h1>
-        <div className='grid grid-cols-2'>
-          <Transportation />
-          <Housing />
-          <Visits />
-          <Food />
+    const handleHousingData = (data) => {
+        const updatedData = [...housingData];
+        updatedData[currentDay] = data;
+        setHousingData(updatedData);
+    };
+
+    const handleTransportationData = (data) => {
+        const updatedData = [...transportationData];
+        updatedData[currentDay] = data;
+        setTransportationData(updatedData);
+    };
+
+    const handleVisitsData = (data) => {
+        const updatedData = [...visitsData];
+        updatedData[currentDay] = data;
+        setVisitsData(updatedData);
+    };
+
+    return (
+        <div className='flex flex-col'>
+            {days.map((day, index) => (
+                <div
+                    key={index}
+                    className={`day ${index === currentDay ? 'active' : ''}`}
+                >
+                    <h1 className="font-bold font-roboto text-palette-light-color-3">
+                        {day.name}
+                    </h1>
+                    <div className='container grid grid-cols-2 my-9 px-12'>
+                        <Transportation
+                            data={transportationData[index]}
+                            setData={handleTransportationData}
+                        />
+                        <Housing
+                            data={housingData[index]}
+                            setData={handleHousingData}
+                        />
+                        <Visits
+                            data={visitsData[index]}
+                            setData={handleVisitsData}
+                        />
+                        <Food
+                            data={foodData[index]}
+                            setData={handleFoodData}
+                        />
+                    </div>
+                </div>
+            ))}
         </div>
-      </div>
-      <div className='flex gap-2 mx-auto'>
-        {currentDay > 0 && (
-          <button className="arrow-button" onClick={handlePrevDay}>
-            <span className="arrow-left">
-              <img src={ArrowLeft} alt="ArrowLeft" />
-            </span>
-          </button>
-        )}
-        {currentDay < days.length - 1 && (
-          <button className="arrow-button" onClick={handleNextDay}>
-            <span className="arrow-right">
-              <img src={ArrowRight} alt="" />
-            </span>
-          </button>
-        )}
-      </div>
-    </div>
-  );
+    );
 };
 
 export default TravelOrganizer;
+
+
 
 
 
