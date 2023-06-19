@@ -2,7 +2,6 @@ import { useRef, useState, useEffect, useContext } from 'react';
 import AuthContext from "../context/AuthContext.jsx";
 import { Link } from "react-router-dom";
 import axios from "../api/axios.js";
-import CryptoJS from 'crypto-js';
 
 const LOGIN_ENDPOINT = "/api/users/login";
 
@@ -25,29 +24,30 @@ const Login = () => {
     }, [username, password]);
 
     const handleLogin = async (username, password) => {
-<<<<<<< Updated upstream
         console.log('Making request with', { username, password });
-        const response = await axios.post(LOGIN_ENDPOINT, JSON.stringify({ username: username, password: password }), {
-=======
-        const hashedPassword = CryptoJS.SHA256(password).toString();
-        const response = await axios.post(LOGIN_ENDPOINT, JSON.stringify({ username: username, password: hashedPassword }), {
->>>>>>> Stashed changes
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            withCredentials: true
-        });
+        try {
+            const response = await axios.post(LOGIN_ENDPOINT, { username, password }, {
+                withCredentials: true
+            });
 
-        console.log('Received response', response);
+            console.log('Received response', response);
 
-        const { accessToken, roles } = response?.data;
-        setAuth({ username, password, roles, accessToken });
-
-        setUsername('');
-        setPassword('');
-        setSuccess(true);
-        console.log('Login successful for username:', username);
+            if (response.status === 200) {
+                console.log('Login successful.');
+                setAuth(true);
+                setUsername('');
+                setPassword('');
+                setSuccess(true);
+            } else {
+                console.error('Unexpected response status:', response.status);
+                setError('Login failed');
+            }
+        } catch (error) {
+            console.log('Error during login:', error);
+            setError('Network Error');
+        }
     };
+
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -113,8 +113,7 @@ const Login = () => {
                 <button className="w-full p-2 bg-blue-500 text-white rounded">Sign In</button>
             </form>
 
-            <p className="text-center mt-4">Need an Account?<br/>
-                <span><Link to="/signup" className="text-blue-500 underline">Sign Up</Link></span></p>
+            <p className="text-center mt-4">Need an Account? Sign Up</p>
         </section>)}
     </>);
 }

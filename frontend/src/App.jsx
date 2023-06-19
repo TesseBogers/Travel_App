@@ -17,7 +17,7 @@ function App() {
     return (
         <Router>
             <Routes>
-                <Route exact path="/" element={<Main>
+                <Route path="/" element={<Main>
                     <Hero/>
                     <AboutUs/>
                     <Features/>
@@ -39,7 +39,7 @@ function App() {
                 <Route path="/contact" element={<Main>
                     <Contact/>
                 </Main>}/>
-                <Route path="/profile" element={<AuthProvider><Main>
+                <Route path="/profile/*" element={<AuthProvider><Main>
                     <Profile/>
                 </Main></AuthProvider>}/>
             </Routes>

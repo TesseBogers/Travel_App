@@ -131,4 +131,16 @@ public class GlobalExceptionHandler {
     public void handleGeneralException(Exception exception) {
         LOGGER.error("Internal server error: ", exception);
     }
+
+    /**
+     * Handles the AuthenticationException. Returns a 401 Unauthorized status code.
+     * @param exception the exception to handle
+     * @see AuthenticationException
+     */
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(AuthenticationException.class)
+    public void handleAuthenticationException(AuthenticationException exception) {
+        LOGGER.error("Authentication failed", exception);
+    }
+
 }

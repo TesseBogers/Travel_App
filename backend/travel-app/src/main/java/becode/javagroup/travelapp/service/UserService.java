@@ -3,16 +3,19 @@ package becode.javagroup.travelapp.service;
 import becode.javagroup.travelapp.dto.UserDto;
 import becode.javagroup.travelapp.dto.UserResponseDto;
 import becode.javagroup.travelapp.dto.UserProfileDto;
+import becode.javagroup.travelapp.configuration.JwtUtil;
 import becode.javagroup.travelapp.exception.DuplicateUserException;
 import becode.javagroup.travelapp.exception.PermissionNotFoundException;
 import becode.javagroup.travelapp.exception.UserNotFoundException;
 import becode.javagroup.travelapp.exception.UserProfileNotFoundException;
+import becode.javagroup.travelapp.exception.AuthenticationException;
 import becode.javagroup.travelapp.mapper.UserProfileMapper;
 import becode.javagroup.travelapp.model.*;
 import becode.javagroup.travelapp.repository.PermissionRepository;
 import becode.javagroup.travelapp.repository.RoleRepository;
 import becode.javagroup.travelapp.repository.UserProfileRepository;
 import becode.javagroup.travelapp.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.mindrot.jbcrypt.BCrypt;
@@ -33,6 +36,7 @@ public class UserService {
     private final UserProfileMapper userProfileMapper;
     private final PermissionRepository permissionRepository;
     private final UserProfileRepository userProfileRepository;
+    private final JwtUtil jwtUtil;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Transactional
@@ -67,16 +71,28 @@ public class UserService {
         }
     }
 
-    public User authenticateUser(String username, String password) {
+    public String authenticateUser(String username, String password) throws AuthenticationException {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException("User not found with username: " + username));
 
         if (user.getPassword() == null || !BCrypt.checkpw(password, user.getPassword())) {
-            throw new UserNotFoundException("User not found with username: " + username);
+            throw new AuthenticationException("Hashed Passwords do not match: " + user.getPassword());
         }
 
-        return user;
+        return jwtUtil.generateToken(user);
     }
+
+    public User getCurrentUser(HttpServletRequest request) {
+        String jwt = (String) request.getAttribute("jwt");
+        if (jwt == null) {
+            throw new AuthenticationException("No JWT token found in request");
+        }
+
+        String username = jwtUtil.extractUsername(jwt);
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("User not found with username: " + username));
+    }
+
 
 
     private Set<Role> saveRoles(Set<Role> roles) {

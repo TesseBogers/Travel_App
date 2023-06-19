@@ -1,6 +1,5 @@
 import axios from 'axios';
-
-const API_URL = 'http://localhost:3290/';
+import { API_URL } from './UserService.js';
 
 class PermissionService {
     async getAllPermissions() {
