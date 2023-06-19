@@ -1,3 +1,9 @@
+// Tailwind
+@import 'normalize.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 //Order of imports is important in this file as it will be the order of the compiled CSS.
 
 // Utils
@@ -32,6 +38,12 @@
 @import 'components/dropdown';
 @import 'components/forms';
 @import 'components/modals';
+@import 'components/admin';
+@import 'components/footer';
+@import './components/hero';
+@import './components/features';
+@import './components/carousel';
+@import './components/authentication';
 
 // Pages
 @import 'pages/home';
@@ -40,6 +52,8 @@
 @import 'pages/live-info';
 @import 'pages/chat';
 @import 'pages/attractions';
+@import 'pages/contact';
+@import 'pages/aboutUs';
 
 // Themes
 @import 'themes/darkmode';
@@ -66,29 +80,93 @@
 @include typography-classes('font-size', 'font', $font-size-scale, $line-height-scale, true);  // line-height is applied
 @include typography-classes('font-size', 'font', $font-size-scale, $line-height-scale, false);  // line-height is not applied
 
-
-
-// all of these "BELOW" can be deleted, this is just to test the fonts and if sass is working in general!
-.heading {
-  color: $brand-blue-30-shades;
-    font-size: 10rem;
+*,
+*::before,
+*::after {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 
-.font-sub-title,
-.font-titles,
-.font-body-text {
-  font-size: 2rem;
-  font-weight: $weight-bold;
+html {
+  scroll-behavior: smooth;
 }
 
-.font-sub-title {
-  font-family: $font-inder;
+
+a {
+  text-decoration: none !important;
 }
 
-.font-titles {
-  font-family: $font-roboto;
+/* Single Info Item */
+.single-info-item {
+  display: flex;
+
+  .icon {
+    flex: 0 0 auto;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 18px;
+    margin-right: 15px;
+  }
+
+  .info {
+    span.title {
+      font: 500 16px "Prompt", sans-serif;
+      line-height: 26px;
+    }
+
+    p {
+      line-height: 21px;
+    }
+  }
 }
 
-.font-body-text {
-  font-family: $font-signika-negative;
+.single-info-item-two {
+  display: flex;
+
+  .inner-info {
+    display: flex;
+  }
+
+  .icon {
+    flex: 0 0 auto;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 1px solid rgba(29, 35, 31, 0.1);
+    margin-right: 20px;
+  }
+
+  .info {
+    span.title {
+      font-weight: 400;
+      line-height: 20px;
+
+      @media only screen and (min-width: 992px) and (max-width: 1199px) {
+        font-size: 12px;
+      }
+    }
+
+    h5 {
+      line-height: 1;
+
+      @media only screen and (min-width: 1200px) and (max-width: 1600px) {
+        font-size: 18px;
+      }
+
+      @media only screen and (min-width: 992px) and (max-width: 1199px) {
+        font-size: 14px;
+      }
+    }
+  }
 }
+
+.heading-header {
+  font-size: 14px !important;
+}
+
+.title {
+  font-size: 12px !important;
+}
+

@@ -6,20 +6,42 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "scss": "sass --watch src/assets/scss:css"
   },
   "dependencies": {
+<<<<<<< HEAD
+=======
+    "@fortawesome/fontawesome-svg-core": "^6.4.0",
+>>>>>>> a1f1eda998131f1d0594ea65aa26c151e49e8d12
     "@fortawesome/free-brands-svg-icons": "^6.4.0",
     "@fortawesome/free-regular-svg-icons": "^6.4.0",
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
+<<<<<<< HEAD
     "@fortawesome/fontawesome-svg-core": "^6.4.0",
     "@fullhuman/postcss-purgecss": "^5.0.0",
     "axios": "^1.4.0",
+=======
+    "@fullhuman/postcss-purgecss": "^5.0.0",
+    "@headlessui/react": "^1.7.15",
+    "@heroicons/react": "^2.0.18",
+    "assets": "^3.0.1",
+    "axios": "^1.4.0",
+    "leaflet": "^1.9.4",
+    "moment": "^2.29.4",
+    "normalize.css": "^8.0.1",
+    "public": "^0.1.5",
+>>>>>>> a1f1eda998131f1d0594ea65aa26c151e49e8d12
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-calendar-timeline": "^0.28.0",
+    "react-dom": "^18.2.0",
+    "react-leaflet": "^4.2.1",
+    "react-router-dom": "^6.11.2",
+    "react-tsparticles": "^2.10.1",
+    "sockjs-client": "^1.6.1",
+    "stompjs": "^2.3.3",
+    "tsparticles": "^2.10.1"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",
@@ -31,9 +53,11 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.3.4",
     "postcss": "^8.4.23",
+    "prettier": "^2.8.8",
+    "prettier-plugin-tailwindcss": "^0.3.0",
     "sass": "^1.62.1",
     "scss-reset": "^1.4.2",
     "tailwindcss": "^3.3.2",
-    "vite": "^4.3.2"
+    "vite": "4.3.9"
   }
 }
